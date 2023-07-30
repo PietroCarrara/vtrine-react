@@ -7,23 +7,38 @@ import { ReactElement } from "react";
 export function MovieCard({ id }: { id: number }) {
   const movieQuery = useMovieDetailsQuery(id);
 
-  return <ShowMovieDetails movie={movieQuery.data ?? {}} />;
+  return <ShowMovieCard movie={movieQuery.data ?? {}} />;
 }
 
-function ShowMovieDetails({ movie }: { movie: Partial<MovieDetails> }) {
+export function LoadingMovieCard() {
+  return <ShowMovieCard movie={{}} />;
+}
+
+export function ShowMovieCard({
+  movie,
+}: {
+  movie: Partial<
+    Pick<
+      MovieDetails,
+      "title" | "poster_path" | "vote_average" | "release_date"
+    >
+  >;
+}) {
   const scoreFromZeroToFive =
     movie.vote_average !== undefined ? movie.vote_average / 2 : undefined;
 
   return (
-    <div className="w-48 m-8">
+    <div className="inline-block" style={{ width: "12rem", minWidth: "12rem" }}>
       <div
         className={
-          "h-72 bg-cover bg-center rounded mb-1" +
+          "bg-cover bg-center rounded mb-1" +
           classes({
             "animate-pulse bg-neutral-500": movie.poster_path === undefined,
           })
         }
         style={{
+          height: "18rem",
+          minHeight: "18rem",
           backgroundImage:
             movie.poster_path !== undefined
               ? `url(${imageURL(movie.poster_path, "w300")})`

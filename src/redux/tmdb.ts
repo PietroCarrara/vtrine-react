@@ -1,19 +1,21 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { z } from "zod";
 
-const movieDetails = z
+const basicMovieDetails = z
   .object({
-    backdrop_path: z.string(),
-    vote_average: z.number(),
-    video: z.boolean(),
-    tagline: z.string(),
-    status: z.string(),
-    release_date: z.string().pipe(z.coerce.date()),
-    poster_path: z.string(),
-    overview: z.string(),
     id: z.number().int(),
-    genres: z.object({ id: z.number().int(), name: z.string() }).array(),
     title: z.string(),
+    backdrop_path: z.string().optional(),
+    poster_path: z.string().optional(),
+    original_language: z.string(),
+    original_title: z.string(),
+    overview: z.string(),
+    media_type: z.string(),
+    popularity: z.number(),
+    release_date: z.string().pipe(z.coerce.date()),
+    video: z.boolean(),
+    vote_average: z.number(),
+    vote_count: z.number().int(),
   })
   .transform((res) => ({
     ...res,
@@ -23,7 +25,21 @@ const movieDetails = z
       day: res.release_date.getDate(),
     },
   }));
+
+const movieDetails = basicMovieDetails.and(
+  z.object({
+    tagline: z.string(),
+    status: z.string(),
+    genres: z.object({ id: z.number().int(), name: z.string() }).array(),
+  })
+);
 export type MovieDetails = z.infer<typeof movieDetails>;
+
+const trendingMoviesPage = z.object({
+  page: z.number().int(),
+  results: basicMovieDetails.array(),
+});
+export type TrendingMoviesPage = z.infer<typeof trendingMoviesPage>;
 
 export const tmdb = createApi({
   reducerPath: "tmdb-api",
@@ -38,10 +54,24 @@ export const tmdb = createApi({
       query: (movieId: number) => `movie/${movieId}`,
       transformResponse: (baseReturn) => movieDetails.parse(baseReturn),
     }),
+
+    trendingMovies: builder.query({
+      query: ({
+        timeWindow = "day",
+        page = 1,
+      }: {
+        timeWindow?: "day" | "week";
+        page?: number;
+      }) => ({
+        url: `trending/movie/${timeWindow}`,
+        params: {
+          page,
+        },
+      }),
+      transformResponse: (baseReturn) => trendingMoviesPage.parse(baseReturn),
+    }),
   }),
 });
-
-export const { useMovieDetailsQuery } = tmdb;
 
 export function imageURL(
   path: string,
@@ -49,3 +79,5 @@ export function imageURL(
 ) {
   return `http://image.tmdb.org/t/p/${quality}/${path}`;
 }
+
+export const { useMovieDetailsQuery, useTrendingMoviesQuery } = tmdb;
