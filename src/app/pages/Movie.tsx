@@ -8,5 +8,5 @@ export function Movie({ id }: { id: number }) {
     return <>This is very bad!</>;
   }
 
-  return <>sla</>;
+  return <div></div>;
 }

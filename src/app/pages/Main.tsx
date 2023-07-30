@@ -3,7 +3,7 @@ import {
   useTrendingShowsQuery,
 } from "../../redux/tmdb";
 import { range } from "../../utils/utils";
-import { LoadingMediaCard, ShowMediaCard } from "../components/MediaCard";
+import { LoadingMediaCard, ShowMediaCard } from "../widgets/MediaCard";
 import { Sidescroller } from "../components/Sidescroller";
 
 export function Main() {
