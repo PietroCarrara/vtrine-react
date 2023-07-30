@@ -3,6 +3,7 @@ import { LoadingImage } from "../components/LoadingImage";
 import { LoadingParagraph } from "../components/LoadingParagraph";
 import { LoadingRating } from "../widgets/LoadingRating";
 import { LoadingText } from "../components/LoadingText";
+import { MovieDownloads } from "../widgets/MovieDownloads";
 
 export function Movie({ id }: { id: number }) {
   const movieQuery = useMovieDetailsQuery(id);
@@ -92,6 +93,10 @@ export function Movie({ id }: { id: number }) {
         loading={movieQuery.isLoading}
         text={movieQuery.data?.overview}
       />
+
+      {movieQuery.isSuccess && movieQuery.data.imdb_id && (
+        <MovieDownloads imdbId={movieQuery.data.imdb_id} />
+      )}
     </div>
   );
 }
