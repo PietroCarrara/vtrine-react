@@ -69,7 +69,7 @@ export function Movie({ id }: { id: number }) {
           />
           <LoadingText
             loading={movieQuery.isLoading}
-            text={movieQuery.data?.release_date.year.toString()}
+            text={movieQuery.data?.release.year.toString()}
             className="block text-lg mb-1"
           />
           <LoadingText

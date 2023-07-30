@@ -21,7 +21,8 @@ const basicMovieDetails = z
   })
   .transform((res) => ({
     ...res,
-    release_date: {
+    release_date: undefined,
+    release: {
       year: res.release_date.getFullYear(),
       month: res.release_date.getMonth(),
       day: res.release_date.getDate(),
@@ -45,7 +46,10 @@ const basicShowDetails = z
   })
   .transform((res) => ({
     ...res,
-    first_air_date: {
+    name: undefined,
+    first_air_date: undefined,
+    title: res.name,
+    release: {
       year: res.first_air_date.getFullYear(),
       month: res.first_air_date.getMonth(),
       day: res.first_air_date.getDate(),
@@ -58,6 +62,16 @@ const movieDetails = basicMovieDetails.and(
     imdb_id: z.string().optional(),
     status: z.string(),
     genres: z.object({ id: z.number().int(), name: z.string() }).array(),
+  })
+);
+
+const showDetails = basicShowDetails.and(
+  z.object({
+    tagline: z.string(),
+    imdb_id: z.string().optional(),
+    genres: z.object({ id: z.number().int(), name: z.string() }).array(),
+    number_of_episodes: z.number().int(),
+    number_of_seasons: z.number().int(),
   })
 );
 
@@ -83,6 +97,11 @@ export const tmdb = createApi({
     movieDetails: builder.query({
       query: (movieId: number) => `movie/${movieId}`,
       transformResponse: (baseReturn) => movieDetails.parse(baseReturn),
+    }),
+
+    showDetails: builder.query({
+      query: (showId: number) => `tv/${showId}`,
+      transformResponse: (baseReturn) => showDetails.parse(baseReturn),
     }),
 
     trendingMovies: builder.query({
@@ -128,6 +147,7 @@ export function imageURL(
 
 export const {
   useMovieDetailsQuery,
+  useShowDetailsQuery,
   useTrendingMoviesQuery,
   useTrendingShowsQuery,
 } = tmdb;

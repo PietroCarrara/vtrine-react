@@ -1,14 +1,20 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import { tmdb } from "./tmdb";
 import { torrentio } from "./torrentio";
+import { transmission } from "./transmission";
 
 export const store = configureStore({
   reducer: {
     [tmdb.reducerPath]: tmdb.reducer,
     [torrentio.reducerPath]: torrentio.reducer,
+    [transmission.reducerPath]: transmission.reducer,
   },
   middleware: (getDefault) =>
-    getDefault().concat([tmdb.middleware, torrentio.middleware]),
+    getDefault().concat([
+      tmdb.middleware,
+      torrentio.middleware,
+      transmission.middleware,
+    ]),
 });
 
 export type AppDispatch = typeof store.dispatch;

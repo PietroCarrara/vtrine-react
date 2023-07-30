@@ -6,6 +6,7 @@ import {
 import { Root } from "./pages/Root";
 import { Main } from "./pages/Main";
 import { Movie } from "./pages/Movie";
+import { Downloads } from "./pages/Downloads";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
       {
         path: "/movie/:movieId",
         element: <MovieLoader />,
+      },
+      {
+        path: "/downloads",
+        element: <Downloads />,
       },
     ],
   },

@@ -34,7 +34,6 @@ export function Main() {
                 media={{
                   ...m,
                   state: "loaded",
-                  year: m.release_date.year,
                   type: "movie",
                 }}
               />
@@ -54,8 +53,6 @@ export function Main() {
                 media={{
                   ...m,
                   state: "loaded",
-                  title: m.name,
-                  year: m.first_air_date.year,
                   type: "show",
                 }}
               />

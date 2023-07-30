@@ -1,4 +1,9 @@
-import { MediaType, imageURL, useMovieDetailsQuery } from "../../redux/tmdb";
+import {
+  MediaType,
+  imageURL,
+  useMovieDetailsQuery,
+  useShowDetailsQuery,
+} from "../../redux/tmdb";
 import { slugify } from "../../utils/utils";
 import { Link } from "react-router-dom";
 import { LoadingText } from "../components/LoadingText";
@@ -6,23 +11,32 @@ import { LoadingImage } from "../components/LoadingImage";
 import { LoadingRating } from "./LoadingRating";
 
 export function MediaCard({ id, type }: { id: number; type: MediaType }) {
-  const movieQuery = useMovieDetailsQuery(id);
+  const movieQuery = useMovieDetailsQuery(id, {
+    skip: type !== "movie",
+  });
+  const showQuery = useShowDetailsQuery(id, {
+    skip: type !== "show",
+  });
 
-  if (movieQuery.isError) {
+  const query = {
+    movie: movieQuery,
+    show: showQuery,
+  }[type];
+
+  if (query.isError) {
     // TODO: Handle errors
     return <>Something went wrong!</>;
   }
 
-  if (movieQuery.isLoading || movieQuery.isUninitialized) {
+  if (query.isLoading || query.isUninitialized) {
     return <LoadingMediaCard />;
   }
 
   return (
     <ShowMediaCard
       media={{
-        ...movieQuery.data,
+        ...query.data,
         state: "loaded",
-        year: movieQuery.data.release_date.year,
         type,
       }}
     />
@@ -44,7 +58,7 @@ export function ShowMediaCard({
         poster_path?: string;
         vote_average: number;
         title: string;
-        year: number;
+        release: { year: number };
         type: MediaType;
       };
 }) {
@@ -90,7 +104,9 @@ export function ShowMediaCard({
           className="float-right"
           loadedClassName="mr-2 text-neutral-400"
           loading={media.state === "loading"}
-          text={media.state === "loaded" ? media.year.toString() : undefined}
+          text={
+            media.state === "loaded" ? media.release.year.toString() : undefined
+          }
         />
       </div>
     </div>
