@@ -28,7 +28,7 @@ export function ShowMovieCard({
     movie.vote_average !== undefined ? movie.vote_average / 2 : undefined;
 
   return (
-    <div className="inline-block" style={{ width: "12rem", minWidth: "12rem" }}>
+    <div style={{ width: "12rem", minWidth: "12rem" }}>
       <div
         className={
           "bg-cover bg-center rounded mb-1" +
