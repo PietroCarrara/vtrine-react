@@ -22,9 +22,7 @@ export function Main() {
 
   return (
     <div className="container">
-      <h2 className="text-3xl mb-3 font-bold tracking-wider">
-        Trending Movies
-      </h2>
+      <h2 className="text-3xl mb-3 font-black">Trending Movies</h2>
       <Sidescroller>
         <div className="flex space-x-4">
           {trendingMovies.isFetching &&
@@ -44,9 +42,7 @@ export function Main() {
         </div>
       </Sidescroller>
 
-      <h2 className="text-3xl mt-8 mb-3 font-bold tracking-wider">
-        Trending Shows
-      </h2>
+      <h2 className="text-3xl mt-8 mb-3 font-black">Trending Shows</h2>
       <Sidescroller>
         <div className="flex space-x-4">
           {trendingShows.isFetching &&

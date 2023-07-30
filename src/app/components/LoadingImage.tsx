@@ -3,12 +3,14 @@ import { loadingColor } from "../style";
 
 export function LoadingImage({
   url,
+  text,
   loading,
   className = "",
   width,
   height,
 }: {
   url?: string;
+  text?: string;
   loading: boolean;
   className?: string;
   width: number | string;
@@ -26,8 +28,12 @@ export function LoadingImage({
       style={{
         width,
         height,
+        minWidth: width,
+        minHeight: height,
         backgroundImage: url ? `url(${url})` : undefined,
       }}
-    />
+    >
+      {text}
+    </div>
   );
 }

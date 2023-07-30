@@ -1,12 +1,9 @@
 import { MediaType, imageURL, useMovieDetailsQuery } from "../../redux/tmdb";
-import { VscStarEmpty, VscStarFull } from "react-icons/vsc";
-import { range, slugify } from "../../utils/utils";
-import { VscStarHalf } from "react-icons/vsc";
-import { ReactElement } from "react";
+import { slugify } from "../../utils/utils";
 import { Link } from "react-router-dom";
 import { LoadingText } from "../components/LoadingText";
 import { LoadingImage } from "../components/LoadingImage";
-import { LoadingElement } from "../components/LoadingElement";
+import { LoadingRating } from "../components/LoadingRating";
 
 export function MediaCard({ id, type }: { id: number; type: MediaType }) {
   const movieQuery = useMovieDetailsQuery(id);
@@ -82,44 +79,16 @@ export function ShowMediaCard({
       />
 
       <LoadingText
-        className="font-bold text-lg line-clamp-1 mb-1"
+        className="font-bold text-lg line-clamp-1 mb-1 w-100"
         loading={media.state === "loading"}
         text={media.state === "loaded" ? media.title : undefined}
       />
 
       <div>
-        <LoadingElement
+        <LoadingRating
           loading={media.state === "loading"}
-          className="inline-block"
-          loadedClassName="text-yellow-500"
-        >
-          {scoreFromZeroToFive !== undefined && (
-            <>
-              {range(Math.floor(scoreFromZeroToFive)).map((i) => (
-                <Star state="full" key={i} />
-              ))}
-              {scoreFromZeroToFive - Math.floor(scoreFromZeroToFive) >=
-                0.45 && (
-                <>
-                  <Star state="half" />
-                  {range(Math.ceil(4 - scoreFromZeroToFive)).map((i) => (
-                    <Star state="empty" key={i} />
-                  ))}
-                </>
-              )}
-              {!(
-                scoreFromZeroToFive - Math.floor(scoreFromZeroToFive) >=
-                0.45
-              ) &&
-                range(Math.ceil(5 - scoreFromZeroToFive)).map((i) => (
-                  <Star state="empty" key={i} />
-                ))}
-            </>
-          )}
-          {scoreFromZeroToFive === undefined &&
-            range(5).map((i) => <Star key={i} state="empty" />)}
-        </LoadingElement>
-
+          rating={media.state === "loaded" ? media.vote_average : undefined}
+        />
         <LoadingText
           className="float-right"
           loadedClassName="mr-2 text-neutral-400"
@@ -129,14 +98,4 @@ export function ShowMediaCard({
       </div>
     </div>
   );
-}
-
-function Star({ state }: { state: "full" | "half" | "empty" }) {
-  const result: Record<typeof state, ReactElement> = {
-    full: <VscStarFull style={{ display: "inline" }} />,
-    half: <VscStarHalf style={{ display: "inline" }} />,
-    empty: <VscStarEmpty style={{ display: "inline" }} />,
-  };
-
-  return result[state];
 }
