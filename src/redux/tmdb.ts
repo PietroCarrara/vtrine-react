@@ -26,6 +26,30 @@ const basicMovieDetails = z
     },
   }));
 
+const basicShowDetails = z
+  .object({
+    id: z.number().int(),
+    name: z.string(),
+    backdrop_path: z.string().optional(),
+    poster_path: z.string().optional(),
+    original_language: z.string(),
+    original_name: z.string(),
+    overview: z.string(),
+    media_type: z.string(),
+    popularity: z.number(),
+    first_air_date: z.string().pipe(z.coerce.date()),
+    vote_average: z.number(),
+    vote_count: z.number().int(),
+  })
+  .transform((res) => ({
+    ...res,
+    first_air_date: {
+      year: res.first_air_date.getFullYear(),
+      month: res.first_air_date.getMonth(),
+      day: res.first_air_date.getDate(),
+    },
+  }));
+
 const movieDetails = basicMovieDetails.and(
   z.object({
     tagline: z.string(),
@@ -33,13 +57,16 @@ const movieDetails = basicMovieDetails.and(
     genres: z.object({ id: z.number().int(), name: z.string() }).array(),
   })
 );
-export type MovieDetails = z.infer<typeof movieDetails>;
 
 const trendingMoviesPage = z.object({
   page: z.number().int(),
   results: basicMovieDetails.array(),
 });
-export type TrendingMoviesPage = z.infer<typeof trendingMoviesPage>;
+
+const trendingShowsPage = z.object({
+  page: z.number().int(),
+  results: basicShowDetails.array(),
+});
 
 export const tmdb = createApi({
   reducerPath: "tmdb-api",
@@ -70,6 +97,22 @@ export const tmdb = createApi({
       }),
       transformResponse: (baseReturn) => trendingMoviesPage.parse(baseReturn),
     }),
+
+    trendingShows: builder.query({
+      query: ({
+        timeWindow = "day",
+        page = 1,
+      }: {
+        timeWindow?: "day" | "week";
+        page?: number;
+      }) => ({
+        url: `trending/tv/${timeWindow}`,
+        params: {
+          page,
+        },
+      }),
+      transformResponse: (baseReturn) => trendingShowsPage.parse(baseReturn),
+    }),
   }),
 });
 
@@ -80,4 +123,8 @@ export function imageURL(
   return `http://image.tmdb.org/t/p/${quality}/${path}`;
 }
 
-export const { useMovieDetailsQuery, useTrendingMoviesQuery } = tmdb;
+export const {
+  useMovieDetailsQuery,
+  useTrendingMoviesQuery,
+  useTrendingShowsQuery,
+} = tmdb;

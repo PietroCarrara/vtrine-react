@@ -1,5 +1,5 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { MovieCard } from "./components/MovieCard";
+import { MediaCard } from "./components/MediaCard";
 import { Root } from "./pages/Root";
 import { Main } from "./pages/Main";
 

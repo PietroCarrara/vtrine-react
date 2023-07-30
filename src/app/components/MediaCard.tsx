@@ -1,31 +1,51 @@
-import { MovieDetails, imageURL, useMovieDetailsQuery } from "../../redux/tmdb";
+import { imageURL, useMovieDetailsQuery } from "../../redux/tmdb";
 import { VscStarEmpty, VscStarFull } from "react-icons/vsc";
 import { classes, range } from "../../utils/utils";
 import { VscStarHalf } from "react-icons/vsc";
 import { ReactElement } from "react";
 
-export function MovieCard({ id }: { id: number }) {
+export function MediaCard({ id }: { id: number }) {
   const movieQuery = useMovieDetailsQuery(id);
 
-  return <ShowMovieCard movie={movieQuery.data ?? {}} />;
+  if (movieQuery.isError) {
+    // TODO: Handle errors
+    return <>Something went wrong!</>;
+  }
+
+  if (movieQuery.isLoading || movieQuery.isUninitialized) {
+    return <LoadingMediaCard />;
+  }
+
+  return (
+    <ShowMediaCard
+      media={{
+        ...movieQuery.data,
+        state: "loaded",
+        year: movieQuery.data.release_date.year,
+      }}
+    />
+  );
 }
 
-export function LoadingMovieCard() {
-  return <ShowMovieCard movie={{}} />;
+export function LoadingMediaCard() {
+  return <ShowMediaCard media={{ state: "loading" }} />;
 }
 
-export function ShowMovieCard({
-  movie,
+export function ShowMediaCard({
+  media,
 }: {
-  movie: Partial<
-    Pick<
-      MovieDetails,
-      "title" | "poster_path" | "vote_average" | "release_date"
-    >
-  >;
+  media:
+    | { state: "loading" }
+    | {
+        state: "loaded";
+        poster_path?: string;
+        vote_average: number;
+        title: string;
+        year: number;
+      };
 }) {
   const scoreFromZeroToFive =
-    movie.vote_average !== undefined ? movie.vote_average / 2 : undefined;
+    media.state !== "loading" ? media.vote_average / 2 : undefined;
 
   return (
     <div style={{ width: "12rem", minWidth: "12rem" }}>
@@ -33,25 +53,25 @@ export function ShowMovieCard({
         className={
           "bg-cover bg-center rounded mb-1" +
           classes({
-            "animate-pulse bg-neutral-500": movie.poster_path === undefined,
+            "animate-pulse bg-neutral-500": media.state === "loading",
           })
         }
         style={{
           height: "18rem",
           minHeight: "18rem",
           backgroundImage:
-            movie.poster_path !== undefined
-              ? `url(${imageURL(movie.poster_path, "w300")})`
+            media.state === "loaded" && media.poster_path
+              ? `url(${imageURL(media.poster_path, "w300")})`
               : undefined,
         }}
       />
       <span
         className={`font-bold text-lg line-clamp-1 mb-1 ${classes({
           "rounded animate-pulse text-neutral-500 bg-neutral-500":
-            movie.title === undefined,
+            media.state === "loading",
         })}`}
       >
-        {String(movie.title)}
+        {media.state === "loaded" && media.title}
       </span>
 
       <div>
@@ -80,11 +100,11 @@ export function ShowMovieCard({
         <span
           className={`float-right mr-2 ${classes({
             "rounded animate-pulse text-neutral-500 mr-0 bg-neutral-500":
-              movie.release_date === undefined,
-            "text-neutral-400": movie.release_date !== undefined,
+              media.state === "loading",
+            "text-neutral-400": media.state === "loaded",
           })}`}
         >
-          {String(movie.release_date?.year)}
+          {media.state === "loaded" && media.year}
         </span>
       </div>
     </div>
