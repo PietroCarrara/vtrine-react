@@ -1,6 +1,6 @@
 import { VscStarEmpty, VscStarFull, VscStarHalf } from "react-icons/vsc";
 import { range } from "../../utils/utils";
-import { LoadingElement } from "./LoadingElement";
+import { LoadingElement } from "../components/LoadingElement";
 
 export function LoadingRating({
   loading,

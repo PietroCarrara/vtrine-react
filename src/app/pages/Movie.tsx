@@ -1,7 +1,7 @@
 import { imageURL, useMovieDetailsQuery } from "../../redux/tmdb";
 import { LoadingImage } from "../components/LoadingImage";
 import { LoadingParagraph } from "../components/LoadingParagraph";
-import { LoadingRating } from "../components/LoadingRating";
+import { LoadingRating } from "../widgets/LoadingRating";
 import { LoadingText } from "../components/LoadingText";
 
 export function Movie({ id }: { id: number }) {

@@ -3,7 +3,7 @@ import { slugify } from "../../utils/utils";
 import { Link } from "react-router-dom";
 import { LoadingText } from "../components/LoadingText";
 import { LoadingImage } from "../components/LoadingImage";
-import { LoadingRating } from "../components/LoadingRating";
+import { LoadingRating } from "./LoadingRating";
 
 export function MediaCard({ id, type }: { id: number; type: MediaType }) {
   const movieQuery = useMovieDetailsQuery(id);
@@ -48,9 +48,6 @@ export function ShowMediaCard({
         type: MediaType;
       };
 }) {
-  const scoreFromZeroToFive =
-    media.state !== "loading" ? media.vote_average / 2 : undefined;
-
   const link =
     media.state === "loaded"
       ? {

@@ -55,6 +55,7 @@ const basicShowDetails = z
 const movieDetails = basicMovieDetails.and(
   z.object({
     tagline: z.string(),
+    imdb_id: z.string().optional(),
     status: z.string(),
     genres: z.object({ id: z.number().int(), name: z.string() }).array(),
   })
