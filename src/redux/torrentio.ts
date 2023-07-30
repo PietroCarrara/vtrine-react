@@ -12,7 +12,8 @@ const movieResults = z.object({
         bingeGroup: z
           .string()
           .transform((s) => s.split("|"))
-          .nullable(),
+          .nullable()
+          .optional(),
       }),
     })
     .array(),

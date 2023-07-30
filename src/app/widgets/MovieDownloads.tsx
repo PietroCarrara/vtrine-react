@@ -35,7 +35,7 @@ export function MovieDownloads({ imdbId }: { imdbId: string }) {
       {header}
       <div className="md:grid md:grid-cols-3 md:gap-x-3">
         {downloadsQuery.data.streams.map((s) => (
-          <Box>
+          <Box key={s.infoHash}>
             <div className="grid grid-cols-5">
               <span
                 className="col-span-4"
