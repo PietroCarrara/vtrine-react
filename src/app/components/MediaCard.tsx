@@ -1,10 +1,11 @@
-import { imageURL, useMovieDetailsQuery } from "../../redux/tmdb";
+import { MediaType, imageURL, useMovieDetailsQuery } from "../../redux/tmdb";
 import { VscStarEmpty, VscStarFull } from "react-icons/vsc";
-import { classes, range } from "../../utils/utils";
+import { classes, range, slugify } from "../../utils/utils";
 import { VscStarHalf } from "react-icons/vsc";
 import { ReactElement } from "react";
+import { Link } from "react-router-dom";
 
-export function MediaCard({ id }: { id: number }) {
+export function MediaCard({ id, type }: { id: number; type: MediaType }) {
   const movieQuery = useMovieDetailsQuery(id);
 
   if (movieQuery.isError) {
@@ -22,6 +23,7 @@ export function MediaCard({ id }: { id: number }) {
         ...movieQuery.data,
         state: "loaded",
         year: movieQuery.data.release_date.year,
+        type,
       }}
     />
   );
@@ -38,16 +40,31 @@ export function ShowMediaCard({
     | { state: "loading" }
     | {
         state: "loaded";
+        id: number;
         poster_path?: string;
         vote_average: number;
         title: string;
         year: number;
+        type: MediaType;
       };
 }) {
   const scoreFromZeroToFive =
     media.state !== "loading" ? media.vote_average / 2 : undefined;
 
-  return (
+  const link =
+    media.state === "loaded"
+      ? {
+          movie: `/movie/${slugify(media.title)}-${media.id}`,
+          show: `/show/${slugify(media.title)}-${media.id}`,
+        }[media.type]
+      : undefined;
+
+  const makeLink =
+    link !== undefined
+      ? (e: JSX.Element) => <Link to={link}>{e}</Link>
+      : (e: JSX.Element) => e;
+
+  return makeLink(
     <div style={{ width: "12rem", minWidth: "12rem" }}>
       <div
         className={

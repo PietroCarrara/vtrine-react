@@ -1,6 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { z } from "zod";
 
+export type MediaType = "movie" | "show";
+
 const basicMovieDetails = z
   .object({
     id: z.number().int(),
@@ -10,7 +12,7 @@ const basicMovieDetails = z
     original_language: z.string(),
     original_title: z.string(),
     overview: z.string(),
-    media_type: z.string(),
+    media_type: z.string().optional(),
     popularity: z.number(),
     release_date: z.string().pipe(z.coerce.date()),
     video: z.boolean(),
@@ -35,7 +37,7 @@ const basicShowDetails = z
     original_language: z.string(),
     original_name: z.string(),
     overview: z.string(),
-    media_type: z.string(),
+    media_type: z.string().optional(),
     popularity: z.number(),
     first_air_date: z.string().pipe(z.coerce.date()),
     vote_average: z.number(),
