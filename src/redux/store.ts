@@ -1,8 +1,11 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
+import { tmdb } from "./tmdb";
 
 export const store = configureStore({
   reducer: {
+    [tmdb.reducerPath]: tmdb.reducer,
   },
+  middleware: (getDefault) => getDefault().concat([tmdb.middleware]),
 });
 
 export type AppDispatch = typeof store.dispatch;
