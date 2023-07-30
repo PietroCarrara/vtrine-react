@@ -16,7 +16,7 @@ export function LoadingText({
     <span
       className={
         classes({
-          [`height rounded animate-pulse text-transparent bg-${loadingColor}`]:
+          [`rounded animate-pulse text-transparent bg-${loadingColor}`]:
             loading,
           [loadedClassName]: !loading,
         }) + className

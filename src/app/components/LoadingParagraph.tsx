@@ -13,7 +13,7 @@ export function LoadingParagraph({
 }) {
   if (loading) {
     return (
-      <div className={`animate-pulse text-${loadingColor}`}>
+      <div className={`animate-pulse text-transparent`}>
         <div className={`rounded mb-1 bg-${loadingColor}`}>placeholder</div>
         <div className={`rounded mb-1 bg-${loadingColor}`}>placeholder</div>
         <div className={`rounded mb-1 bg-${loadingColor}`}>placeholder</div>
