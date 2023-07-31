@@ -1,9 +1,28 @@
 import { VscAdd } from "react-icons/vsc";
 import { useMovieQuery } from "../../redux/torrentio";
 import { LoadingParagraph } from "../components/LoadingParagraph";
+import { useAddDownloadMutation } from "../../redux/transmission";
 
-export function MovieDownloads({ imdbId }: { imdbId: string }) {
+const trackers = [
+  "udp://open.demonii.com:1337/announce",
+  "udp://tracker.openbittorrent.com:80",
+  "udp://tracker.coppersurfer.tk:6969",
+  "udp://glotorrents.pw:6969/announce",
+  "udp://tracker.opentrackr.org:1337/announce",
+  "udp://torrent.gresille.org:80/announce",
+  "udp://p4p.arenabg.com:1337",
+  "udp://tracker.leechers-paradise.org:6969",
+];
+
+export function MovieDownloads({
+  imdbId,
+  title,
+}: {
+  imdbId: string;
+  title: string;
+}) {
   const downloadsQuery = useMovieQuery(imdbId);
+  const [addTorrent] = useAddDownloadMutation();
   const header = <h2 className="text-xl font-black my-3">Downloads</h2>;
 
   if (downloadsQuery.isError) {
@@ -43,7 +62,16 @@ export function MovieDownloads({ imdbId }: { imdbId: string }) {
               >
                 {s.title}
               </span>
-              <span className="bg-green-500 rounded-full shadow p-2 m-auto">
+              <span
+                className="bg-green-500 rounded-full shadow p-2 m-auto cursor-pointer"
+                onClick={() => {
+                  const magnet = `magnet:?xt=urn:btih:${
+                    s.infoHash
+                  }&dn=${title}&tr=${trackers.join("&tr=")}`;
+
+                  addTorrent({ magnet });
+                }}
+              >
                 <VscAdd className="m-auto" />
               </span>
             </div>

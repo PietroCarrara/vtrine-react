@@ -140,4 +140,4 @@ export const transmission = createApi({
   }),
 });
 
-export const { useDownloadsQuery } = transmission;
+export const { useDownloadsQuery, useAddDownloadMutation } = transmission;

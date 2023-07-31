@@ -95,7 +95,10 @@ export function Movie({ id }: { id: number }) {
       />
 
       {movieQuery.isSuccess && movieQuery.data.imdb_id && (
-        <MovieDownloads imdbId={movieQuery.data.imdb_id} />
+        <MovieDownloads
+          imdbId={movieQuery.data.imdb_id}
+          title={`${movieQuery.data.title} (${movieQuery.data.release.year})`}
+        />
       )}
     </div>
   );
