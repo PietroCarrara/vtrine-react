@@ -1,5 +1,3 @@
-import { loadingColor } from "../style";
-
 export function LoadingParagraph({
   text = "Placeholder",
   loading,
@@ -14,12 +12,10 @@ export function LoadingParagraph({
   if (loading) {
     return (
       <div className={`animate-pulse text-transparent`}>
-        <div className={`rounded mb-1 bg-${loadingColor}`}>placeholder</div>
-        <div className={`rounded mb-1 bg-${loadingColor}`}>placeholder</div>
-        <div className={`rounded mb-1 bg-${loadingColor}`}>placeholder</div>
-        <div className={`rounded mb-1 bg-${loadingColor} w-2/3`}>
-          placeholder
-        </div>
+        <div className={`rounded mb-1 bg-neutral-500`}>placeholder</div>
+        <div className={`rounded mb-1 bg-neutral-500`}>placeholder</div>
+        <div className={`rounded mb-1 bg-neutral-500`}>placeholder</div>
+        <div className={`rounded mb-1 bg-neutral-500 w-2/3`}>placeholder</div>
       </div>
     );
   }

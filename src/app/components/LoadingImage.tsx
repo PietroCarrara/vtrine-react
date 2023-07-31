@@ -1,5 +1,4 @@
 import { classes } from "../../utils/utils";
-import { loadingColor } from "../style";
 
 export function LoadingImage({
   url,
@@ -21,7 +20,7 @@ export function LoadingImage({
       className={
         "bg-cover bg-center" +
         classes({
-          [`animate-pulse bg-${loadingColor}`]: loading,
+          [`animate-pulse bg-neutral-500`]: loading,
         }) +
         className
       }

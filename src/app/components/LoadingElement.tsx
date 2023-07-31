@@ -1,5 +1,4 @@
 import { classes } from "../../utils/utils";
-import { loadingColor } from "../style";
 
 export function LoadingElement({
   children,
@@ -16,7 +15,7 @@ export function LoadingElement({
     <div
       className={
         classes({
-          [`rounded animate-pulse text-${loadingColor}`]: loading,
+          [`rounded animate-pulse text-neutral-500`]: loading,
           [loadedClassName]: !loading,
         }) + className
       }

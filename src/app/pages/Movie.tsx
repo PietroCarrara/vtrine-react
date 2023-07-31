@@ -64,7 +64,7 @@ export function Movie({ id }: { id: number }) {
         <div>
           <LoadingText
             loading={movieQuery.isLoading}
-            text={movieQuery.isSuccess ? movieQuery.data.title : undefined}
+            text={movieQuery.data?.title}
             className="block font-bold text-xl mb-1"
           />
           <LoadingText

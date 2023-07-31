@@ -1,5 +1,4 @@
 import { classes } from "../../utils/utils";
-import { loadingColor } from "../style";
 
 export function LoadingText({
   text = "Placeholder",
@@ -16,8 +15,7 @@ export function LoadingText({
     <span
       className={
         classes({
-          [`rounded animate-pulse text-transparent bg-${loadingColor}`]:
-            loading,
+          [`rounded animate-pulse text-transparent bg-neutral-500`]: loading,
           [loadedClassName]: !loading,
         }) + className
       }

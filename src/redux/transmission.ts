@@ -118,6 +118,25 @@ export const transmission = createApi({
       transformResponse: (base) =>
         successOf(torrents, "torrents").parse(base).arguments.torrents,
     }),
+
+    addDownload: builder.mutation({
+      query: ({
+        magnet,
+        downloadDir,
+      }: {
+        magnet: string;
+        downloadDir?: string;
+      }) => ({
+        url: "/",
+        body: {
+          method: "torrent-add",
+          arguments: {
+            filename: magnet,
+            "download-dir": downloadDir,
+          },
+        },
+      }),
+    }),
   }),
 });
 
