@@ -142,7 +142,11 @@ export function imageURL(
   path: string,
   quality: "w300" | "w780" | "w1280" | "original"
 ) {
-  return `http://image.tmdb.org/t/p/${quality}/${path}`;
+  if (!path.startsWith("/")) {
+    path = "/" + path;
+  }
+
+  return `http://image.tmdb.org/t/p/${quality}${path}`;
 }
 
 export const {
