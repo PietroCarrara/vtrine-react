@@ -4,7 +4,7 @@ import {
   useParams,
 } from "react-router-dom";
 import { Root } from "./pages/Root";
-import { Main } from "./pages/Main";
+import { Explore } from "./pages/Explore";
 import { Movie } from "./pages/Movie";
 import { Downloads } from "./pages/Downloads";
 
@@ -15,7 +15,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Main />,
+        element: <Explore />,
       },
       {
         path: "/movie/:movieId",

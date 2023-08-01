@@ -16,12 +16,8 @@ export function Movie({ id }: { id: number }) {
   return (
     <div>
       <div
-        className="bg-cover bg-top"
+        className="bg-cover bg-top absolute top-0 left-0 -z-20"
         style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          zIndex: -1,
           height: "12rem",
           width: "100vw",
           backgroundImage:
@@ -44,62 +40,64 @@ export function Movie({ id }: { id: number }) {
         />
       </div>
 
-      <div className="flex space-x-3 mb-4" style={{ marginTop: "6rem" }}>
-        <LoadingImage
-          loading={movieQuery.isLoading}
-          width={"8rem"}
-          height={"12rem"}
-          className="rounded"
-          url={
-            movieQuery.isSuccess && movieQuery.data.poster_path
-              ? imageURL(movieQuery.data.poster_path, "w780")
-              : undefined
-          }
-          text={
-            movieQuery.isSuccess && !movieQuery.data.poster_path
-              ? "No Poster"
-              : undefined
-          }
-        />
-        <div>
-          <LoadingText
+      <div className="px-6">
+        <div className="flex space-x-3 mb-4" style={{ marginTop: "6rem" }}>
+          <LoadingImage
             loading={movieQuery.isLoading}
-            text={movieQuery.data?.title}
-            className="block font-bold text-xl mb-1"
+            width={"8rem"}
+            height={"12rem"}
+            className="rounded"
+            url={
+              movieQuery.isSuccess && movieQuery.data.poster_path
+                ? imageURL(movieQuery.data.poster_path, "w780")
+                : undefined
+            }
+            text={
+              movieQuery.isSuccess && !movieQuery.data.poster_path
+                ? "No Poster"
+                : undefined
+            }
           />
-          <LoadingText
-            loading={movieQuery.isLoading}
-            text={movieQuery.data?.release.year.toString()}
-            className="block text-lg mb-1"
-          />
-          <LoadingText
-            loading={movieQuery.isLoading}
-            text={movieQuery.data?.genres.map((g) => g.name).join(", ")}
-            className="block text-neutral-400 mb-1"
-          />
-          <LoadingRating
-            className="text-xl"
-            loading={movieQuery.isLoading}
-            rating={movieQuery.data?.vote_average}
-          />
+          <div>
+            <LoadingText
+              loading={movieQuery.isLoading}
+              text={movieQuery.data?.title}
+              className="block font-bold text-xl mb-1"
+            />
+            <LoadingText
+              loading={movieQuery.isLoading}
+              text={movieQuery.data?.release.year.toString()}
+              className="block text-lg mb-1"
+            />
+            <LoadingText
+              loading={movieQuery.isLoading}
+              text={movieQuery.data?.genres.map((g) => g.name).join(", ")}
+              className="block text-neutral-400 mb-1"
+            />
+            <LoadingRating
+              className="text-xl"
+              loading={movieQuery.isLoading}
+              rating={movieQuery.data?.vote_average}
+            />
+          </div>
         </div>
-      </div>
-      <LoadingText
-        className="block italic text-2xl font-black mt-5 mb-3"
-        loading={movieQuery.isLoading}
-        text={movieQuery.data?.tagline}
-      />
-      <LoadingParagraph
-        loading={movieQuery.isLoading}
-        text={movieQuery.data?.overview}
-      />
-
-      {movieQuery.isSuccess && movieQuery.data.imdb_id && (
-        <MovieDownloads
-          imdbId={movieQuery.data.imdb_id}
-          title={`${movieQuery.data.title} (${movieQuery.data.release.year})`}
+        <LoadingText
+          className="block italic text-2xl font-black mt-5 mb-3"
+          loading={movieQuery.isLoading}
+          text={movieQuery.data?.tagline}
         />
-      )}
+        <LoadingParagraph
+          loading={movieQuery.isLoading}
+          text={movieQuery.data?.overview}
+        />
+
+        {movieQuery.isSuccess && movieQuery.data.imdb_id && (
+          <MovieDownloads
+            imdbId={movieQuery.data.imdb_id}
+            title={`${movieQuery.data.title} (${movieQuery.data.release.year})`}
+          />
+        )}
+      </div>
     </div>
   );
 }

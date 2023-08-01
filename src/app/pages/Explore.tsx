@@ -6,7 +6,7 @@ import { range } from "../../utils/utils";
 import { LoadingMediaCard, ShowMediaCard } from "../widgets/MediaCard";
 import { Sidescroller } from "../components/Sidescroller";
 
-export function Main() {
+export function Explore() {
   const trendingMovies = useTrendingMoviesQuery({});
   const trendingShows = useTrendingShowsQuery({});
 
@@ -21,8 +21,8 @@ export function Main() {
   }
 
   return (
-    <div className="container">
-      <h2 className="text-3xl mb-3 font-black">Trending Movies</h2>
+    <div>
+      <h2 className="text-3xl my-3 mx-6 font-black">Trending Movies</h2>
       <Sidescroller>
         <div className="flex space-x-4">
           {trendingMovies.isFetching &&
@@ -41,7 +41,7 @@ export function Main() {
         </div>
       </Sidescroller>
 
-      <h2 className="text-3xl mt-8 mb-3 font-black">Trending Shows</h2>
+      <h2 className="text-3xl my-3 mx-6 font-black">Trending Shows</h2>
       <Sidescroller>
         <div className="flex space-x-4">
           {trendingShows.isFetching &&

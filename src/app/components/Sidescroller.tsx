@@ -5,5 +5,5 @@ export function Sidescroller({
 }: {
   children?: ReactNode[] | ReactNode;
 }) {
-  return <div className="overflow-auto whitespace-nowrap">{children}</div>;
+  return <div className="overflow-auto whitespace-nowrap pl-3">{children}</div>;
 }

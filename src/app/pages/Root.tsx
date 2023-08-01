@@ -1,13 +1,4 @@
-import { ReactElement } from "react";
-import { IconBaseProps, IconType } from "react-icons";
-import {
-  VscAccount,
-  VscChecklist,
-  VscLibrary,
-  VscMap,
-  VscMegaphone,
-  VscSearch,
-} from "react-icons/vsc";
+import { VscLibrary, VscMap, VscSearch } from "react-icons/vsc";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { classes } from "../../utils/utils";
 

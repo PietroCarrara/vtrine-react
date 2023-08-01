@@ -12,7 +12,7 @@ export function Downloads() {
 
   const Base = ({ children }: { children: React.ReactNode }) => (
     <div>
-      <h2 className="text-xl font-black mb-4">Downloads</h2>
+      <h2 className="text-xl font-black my-4 mx-6">Downloads</h2>
       <Sidescroller>
         <div className="flex space-x-4">{children}</div>
       </Sidescroller>
