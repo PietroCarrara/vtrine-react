@@ -47,9 +47,7 @@ function NavIcon({ label }: { label: Label }) {
     >
       <Link to={link}>
         <Icon className="block m-auto text-2xl" />
-        {isFocused && (
-          <span className="text-sm text-center block">{label}</span>
-        )}
+        <span className="text-xs text-center block">{label}</span>
       </Link>
     </div>
   );
