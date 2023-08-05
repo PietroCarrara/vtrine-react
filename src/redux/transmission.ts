@@ -35,19 +35,22 @@ const torrents = z
       ])
       .transform(
         (s) =>
-          ({
-            0: "stopped",
-            1: "on-queue-to-verify-local-data",
-            2: "verifying-local-data",
-            3: "on-queue-to-download",
-            4: "downloading",
-            5: "on-queue-to-seed",
-            6: "seeding",
-          }[s])
+          ((
+            {
+              0: "stopped",
+              1: "on-queue-to-verify-local-data",
+              2: "verifying-local-data",
+              3: "on-queue-to-download",
+              4: "downloading",
+              5: "on-queue-to-seed",
+              6: "seeding",
+            } as const
+          )[s])
       ),
     labels: z.string().array(),
   })
   .array();
+export type TransmissionDownload = z.infer<typeof torrents>[number];
 
 function successOf<T extends z.ZodTypeAny, K extends string>(obj: T, key: K) {
   return z.object({

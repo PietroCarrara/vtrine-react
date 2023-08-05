@@ -109,7 +109,7 @@ export function Movie({ id }: { id: number }) {
 }
 
 function Backdrops({ id }: { id: number }) {
-  const imagesQuery = useMovieImagesQuery({ movieId: id });
+  const imagesQuery = useMovieImagesQuery({ id: id });
 
   if (imagesQuery.isError || imagesQuery.isUninitialized) {
     // TODO: Handle errors

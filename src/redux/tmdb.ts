@@ -100,7 +100,7 @@ const tmdbImage = z
     iso_639_1: i.iso_639_1 === null ? "xx" : i.iso_639_1,
   }));
 
-const movieImages = z.object({
+const images = z.object({
   id: z.number().int(),
   backdrops: tmdbImage.array(),
   logos: tmdbImage.array(),
@@ -159,13 +159,23 @@ export const tmdb = createApi({
     }),
 
     movieImages: builder.query({
-      query: (args: { movieId: number; language?: string }) => ({
-        url: `movie/${args.movieId}/images`,
+      query: (args: { id: number; language?: string }) => ({
+        url: `movie/${args.id}/images`,
         params: {
           language: args.language === "xx" ? "null" : args.language,
         },
       }),
-      transformResponse: (baseReturn) => movieImages.parse(baseReturn),
+      transformResponse: (baseReturn) => images.parse(baseReturn),
+    }),
+
+    showImages: builder.query({
+      query: (args: { id: number; language?: string }) => ({
+        url: `tv/${args.id}/images`,
+        params: {
+          language: args.language === "xx" ? "null" : args.language,
+        },
+      }),
+      transformResponse: (baseReturn) => images.parse(baseReturn),
     }),
   }),
 });
@@ -187,4 +197,5 @@ export const {
   useTrendingMoviesQuery,
   useTrendingShowsQuery,
   useMovieImagesQuery,
+  useShowImagesQuery,
 } = tmdb;

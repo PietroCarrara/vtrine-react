@@ -1,8 +1,21 @@
 import React from "react";
-import { useDownloadsQuery } from "../../redux/transmission";
-import { LoadingMediaCard, MediaCard } from "../widgets/MediaCard";
-import { Sidescroller } from "../components/Sidescroller";
+import {
+  TransmissionDownload,
+  useDownloadsQuery,
+} from "../../redux/transmission";
+import { LoadingMediaCard } from "../widgets/MediaCard";
 import { Buffer } from "buffer";
+import {
+  MediaType,
+  imageURL,
+  useMovieDetailsQuery,
+  useMovieImagesQuery,
+  useShowDetailsQuery,
+  useShowImagesQuery,
+} from "../../redux/tmdb";
+import { VscCheck, VscCloudDownload, VscDebugStop } from "react-icons/vsc";
+import { LoadingImage } from "../components/LoadingImage";
+import { LoadingText } from "../components/LoadingText";
 
 const tmdbIdKey = "tmdb-id:";
 const legacyKey = "vuetrine-data:";
@@ -12,10 +25,8 @@ export function Downloads() {
 
   const Base = ({ children }: { children: React.ReactNode }) => (
     <div>
-      <h2 className="text-xl font-black my-4 mx-6">Downloads</h2>
-      <Sidescroller>
-        <div className="flex space-x-4">{children}</div>
-      </Sidescroller>
+      <h2 className="text-xl font-black my-4 mx-3">Downloads</h2>
+      <div className="grid grid-cols-1 gap-2 mx-3">{children}</div>
     </div>
   );
 
@@ -27,6 +38,8 @@ export function Downloads() {
   if (donwloadsQuery.isLoading || donwloadsQuery.isUninitialized) {
     return (
       <Base>
+        <LoadingMediaCard />
+        <LoadingMediaCard />
         <LoadingMediaCard />
         <LoadingMediaCard />
         <LoadingMediaCard />
@@ -59,21 +72,102 @@ export function Downloads() {
       }
 
       return {
-        downloadId: d.id,
-        completion: d.percentDone,
         tmdb: obj.tmdb as number,
         type: obj.type as "show" | "movie",
+        download: d,
+        downloadId: d.id,
+        completion: d.percentDone,
+        state: d.status,
       };
     })
     .filter((id): id is Exclude<typeof id, undefined> => id !== undefined);
 
   return (
-    <Base>
-      {mediasDownloading.map((media) => (
-        <MediaCard key={media.tmdb} id={media.tmdb} type={media.type} />
-      ))}
-    </Base>
+    <>
+      <Base>
+        <div className="gap-2 grid grid-cols-1">
+          {mediasDownloading.map((media) => (
+            <MediaDownload
+              key={media.tmdb}
+              mediaId={media.tmdb}
+              mediaType={media.type}
+              download={media.download}
+            />
+          ))}
+        </div>
+      </Base>
+    </>
   );
 }
 
-function DownloadCard() {}
+function MediaDownload({
+  mediaId,
+  mediaType,
+  download,
+}: {
+  mediaId: number;
+  mediaType: MediaType;
+  download: TransmissionDownload;
+}) {
+  const queries = {
+    movie: useMovieDetailsQuery,
+    show: useShowDetailsQuery,
+  };
+  const imageQueries = {
+    movie: useMovieImagesQuery,
+    show: useShowImagesQuery,
+  };
+
+  const icons = {
+    stopped: VscDebugStop,
+    "on-queue-to-verify-local-data": VscDebugStop,
+    "verifying-local-data": VscDebugStop,
+    "on-queue-to-download": VscCloudDownload,
+    downloading: VscCloudDownload,
+    "on-queue-to-seed": VscCheck,
+    seeding: VscCheck,
+  };
+  const Icon = icons[download.status];
+
+  const mediaQuery = queries[mediaType](mediaId);
+  const imageQuery = imageQueries[mediaType]({ id: mediaId });
+
+  console.log({ title: mediaQuery.data?.title, img: imageQuery.data });
+
+  // First backdrop with a language or undefined
+  const image = imageQuery.data?.backdrops
+    .slice()
+    .sort((a, b) => {
+      if (
+        a.iso_639_1 === b.iso_639_1 ||
+        (a.iso_639_1 !== "xx" && b.iso_639_1 !== "xx")
+      ) {
+        return b.vote_average - a.vote_average;
+      }
+
+      return a.iso_639_1 === "xx" ? 1 : -1;
+    })
+    .find(() => true);
+
+  return (
+    <div className="w-full grid grid-cols-12 gap-2">
+      <LoadingImage
+        className="rounded col-span-5"
+        width="100%"
+        height="5rem"
+        loading={imageQuery.isLoading}
+        url={image && imageURL(image.file_path, "w300")}
+      />
+      <div className="col-span-5 m-auto w-full">
+        <LoadingText
+          className="font-bold text-sm"
+          loading={mediaQuery.isLoading}
+          text={mediaQuery.data?.title}
+        />
+      </div>
+      <div className="m-auto">
+        <Icon />
+      </div>
+    </div>
+  );
+}
