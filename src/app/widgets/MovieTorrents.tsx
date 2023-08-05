@@ -14,7 +14,7 @@ const trackers = [
   "udp://tracker.leechers-paradise.org:6969",
 ];
 
-export function MovieDownloads({
+export function MovieTorrents({
   imdbId,
   title,
 }: {

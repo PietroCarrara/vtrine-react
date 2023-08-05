@@ -22,7 +22,7 @@ export function Explore() {
 
   return (
     <div>
-      <h2 className="text-3xl my-3 mx-6 font-black">Trending Movies</h2>
+      <h2 className="text-3xl my-3 mx-3 font-black">Trending Movies</h2>
       <Sidescroller>
         <div className="flex space-x-4">
           {trendingMovies.isFetching &&
@@ -41,7 +41,7 @@ export function Explore() {
         </div>
       </Sidescroller>
 
-      <h2 className="text-3xl my-3 mx-6 font-black">Trending Shows</h2>
+      <h2 className="text-3xl my-3 mx-3 font-black">Trending Shows</h2>
       <Sidescroller>
         <div className="flex space-x-4">
           {trendingShows.isFetching &&

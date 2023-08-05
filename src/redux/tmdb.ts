@@ -85,6 +85,28 @@ const trendingShowsPage = z.object({
   results: basicShowDetails.array(),
 });
 
+const tmdbImage = z
+  .object({
+    iso_639_1: z.string().nullable(),
+    file_path: z.string(),
+    vote_average: z.number(),
+    vote_count: z.number().int(),
+    aspect_ratio: z.number(),
+    width: z.number().int(),
+    height: z.number().int(),
+  })
+  .transform((i) => ({
+    ...i,
+    iso_639_1: i.iso_639_1 === null ? "xx" : i.iso_639_1,
+  }));
+
+const movieImages = z.object({
+  id: z.number().int(),
+  backdrops: tmdbImage.array(),
+  logos: tmdbImage.array(),
+  posters: tmdbImage.array(),
+});
+
 export const tmdb = createApi({
   reducerPath: "tmdb-api",
   baseQuery: fetchBaseQuery({
@@ -135,6 +157,16 @@ export const tmdb = createApi({
       }),
       transformResponse: (baseReturn) => trendingShowsPage.parse(baseReturn),
     }),
+
+    movieImages: builder.query({
+      query: (args: { movieId: number; language?: string }) => ({
+        url: `movie/${args.movieId}/images`,
+        params: {
+          language: args.language === "xx" ? "null" : args.language,
+        },
+      }),
+      transformResponse: (baseReturn) => movieImages.parse(baseReturn),
+    }),
   }),
 });
 
@@ -154,4 +186,5 @@ export const {
   useShowDetailsQuery,
   useTrendingMoviesQuery,
   useTrendingShowsQuery,
+  useMovieImagesQuery,
 } = tmdb;

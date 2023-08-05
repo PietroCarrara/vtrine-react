@@ -1,9 +1,13 @@
-import { imageURL, useMovieDetailsQuery } from "../../redux/tmdb";
+import {
+  imageURL,
+  useMovieDetailsQuery,
+  useMovieImagesQuery,
+} from "../../redux/tmdb";
 import { LoadingImage } from "../components/LoadingImage";
 import { LoadingParagraph } from "../components/LoadingParagraph";
 import { LoadingRating } from "../widgets/LoadingRating";
 import { LoadingText } from "../components/LoadingText";
-import { MovieDownloads } from "../widgets/MovieDownloads";
+import { MovieTorrents } from "../widgets/MovieTorrents";
 
 export function Movie({ id }: { id: number }) {
   const movieQuery = useMovieDetailsQuery(id);
@@ -40,7 +44,7 @@ export function Movie({ id }: { id: number }) {
         />
       </div>
 
-      <div className="px-6">
+      <div className="px-3">
         <div className="flex space-x-3 mb-4" style={{ marginTop: "6rem" }}>
           <LoadingImage
             loading={movieQuery.isLoading}
@@ -91,13 +95,77 @@ export function Movie({ id }: { id: number }) {
           text={movieQuery.data?.overview}
         />
 
+        <Backdrops id={id} />
+
         {movieQuery.isSuccess && movieQuery.data.imdb_id && (
-          <MovieDownloads
+          <MovieTorrents
             imdbId={movieQuery.data.imdb_id}
             title={`${movieQuery.data.title} (${movieQuery.data.release.year})`}
           />
         )}
       </div>
+    </div>
+  );
+}
+
+function Backdrops({ id }: { id: number }) {
+  const imagesQuery = useMovieImagesQuery({ movieId: id });
+
+  if (imagesQuery.isError || imagesQuery.isUninitialized) {
+    // TODO: Handle errors
+    return <>This is very bad!</>;
+  }
+
+  // Sort backdrops by language-neutral first, and then by score
+  const images = imagesQuery.isLoading
+    ? [undefined, undefined, undefined]
+    : imagesQuery.data.backdrops
+        .slice()
+        .sort((a, b) => {
+          if (
+            a.iso_639_1 === b.iso_639_1 ||
+            (a.iso_639_1 !== "xx" && b.iso_639_1 !== "xx")
+          ) {
+            return b.vote_average - a.vote_average;
+          }
+
+          return a.iso_639_1 === "xx" ? -1 : 1;
+        })
+        // Skip the first image if there's more than 3
+        // (it's probably the background shown behind the poster)
+        .slice(0, 4)
+        .reverse()
+        .slice(0, 3)
+        .reverse();
+
+  const sizes = {
+    big: {
+      width: "100%",
+      height: "100%",
+    },
+    small: {
+      width: "100%",
+      height: "5rem",
+    },
+  };
+
+  return (
+    <div className="py-2 grid grid-rows-2 grid-flow-col gap-1">
+      {images.map((image, i) => {
+        const size = i === 0 ? "big" : "small";
+
+        return (
+          <LoadingImage
+            className={
+              size === "big" ? "row-span-2 col-span-2 rounded-sm" : "rounded-sm"
+            }
+            width={sizes[size].width}
+            height={sizes[size].height}
+            loading={image === undefined}
+            url={image && imageURL(image.file_path, "w780")}
+          />
+        );
+      })}
     </div>
   );
 }
