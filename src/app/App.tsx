@@ -22,6 +22,10 @@ const router = createBrowserRouter([
         element: <MovieLoader />,
       },
       {
+        path: "/show/:showId",
+        element: <ShowLoader />,
+      },
+      {
         path: "/downloads",
         element: <Downloads />,
       },
@@ -43,7 +47,20 @@ function MovieLoader() {
   const idStr = parts[parts.length - 1];
   const id = parseInt(idStr);
 
-  return <Movie id={id} />;
+  return <Movie id={id} mediaType="movie" />;
+}
+
+function ShowLoader() {
+  const { showId } = useParams();
+  if (!showId) {
+    // TODO: Handle error
+    return <>This is very bad saijsaijiais!</>;
+  }
+  const parts = showId.split("-");
+  const idStr = parts[parts.length - 1];
+  const id = parseInt(idStr);
+
+  return <Movie id={id} mediaType="show" />;
 }
 
 export default App;

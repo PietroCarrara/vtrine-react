@@ -1,7 +1,10 @@
 import {
+  MediaType,
   imageURL,
   useMovieDetailsQuery,
   useMovieImagesQuery,
+  useShowDetailsQuery,
+  useShowImagesQuery,
 } from "../../redux/tmdb";
 import { LoadingImage } from "../components/LoadingImage";
 import { LoadingParagraph } from "../components/LoadingParagraph";
@@ -9,10 +12,15 @@ import { LoadingRating } from "../widgets/LoadingRating";
 import { LoadingText } from "../components/LoadingText";
 import { MovieTorrents } from "../widgets/MovieTorrents";
 
-export function Movie({ id }: { id: number }) {
-  const movieQuery = useMovieDetailsQuery(id);
+export function Movie({ id, mediaType }: { id: number; mediaType: MediaType }) {
+  const queries = {
+    movie: useMovieDetailsQuery,
+    show: useShowDetailsQuery,
+  };
 
-  if (movieQuery.isError || movieQuery.isUninitialized) {
+  const mediaQuery = queries[mediaType](id);
+
+  if (mediaQuery.isError || mediaQuery.isUninitialized) {
     // TODO: Handle errors
     return <>This is very bad!</>;
   }
@@ -25,8 +33,8 @@ export function Movie({ id }: { id: number }) {
           height: "12rem",
           width: "100vw",
           backgroundImage:
-            movieQuery.isSuccess && movieQuery.data.backdrop_path
-              ? `url(${imageURL(movieQuery.data.backdrop_path, "w1280")})`
+            mediaQuery.isSuccess && mediaQuery.data.backdrop_path
+              ? `url(${imageURL(mediaQuery.data.backdrop_path, "w1280")})`
               : undefined,
         }}
       >
@@ -47,69 +55,71 @@ export function Movie({ id }: { id: number }) {
       <div className="px-3">
         <div className="flex space-x-3 mb-4" style={{ marginTop: "6rem" }}>
           <LoadingImage
-            loading={movieQuery.isLoading}
+            loading={mediaQuery.isLoading}
             width={"8rem"}
             height={"12rem"}
             className="rounded"
             url={
-              movieQuery.isSuccess && movieQuery.data.poster_path
-                ? imageURL(movieQuery.data.poster_path, "w780")
+              mediaQuery.isSuccess && mediaQuery.data.poster_path
+                ? imageURL(mediaQuery.data.poster_path, "w780")
                 : undefined
             }
             text={
-              movieQuery.isSuccess && !movieQuery.data.poster_path
+              mediaQuery.isSuccess && !mediaQuery.data.poster_path
                 ? "No Poster"
                 : undefined
             }
           />
           <div>
             <LoadingText
-              loading={movieQuery.isLoading}
-              text={movieQuery.data?.title}
+              loading={mediaQuery.isLoading}
+              text={mediaQuery.data?.title}
               className="block font-bold text-xl mb-1"
             />
             <LoadingText
-              loading={movieQuery.isLoading}
-              text={movieQuery.data?.release.year.toString()}
+              loading={mediaQuery.isLoading}
+              text={mediaQuery.data?.release.year.toString()}
               className="block text-lg mb-1"
             />
             <LoadingText
-              loading={movieQuery.isLoading}
-              text={movieQuery.data?.genres.map((g) => g.name).join(", ")}
+              loading={mediaQuery.isLoading}
+              text={mediaQuery.data?.genres.map((g) => g.name).join(", ")}
               className="block text-neutral-400 mb-1"
             />
             <LoadingRating
               className="text-xl"
-              loading={movieQuery.isLoading}
-              rating={movieQuery.data?.vote_average}
+              loading={mediaQuery.isLoading}
+              rating={mediaQuery.data?.vote_average}
             />
           </div>
         </div>
         <LoadingText
           className="block italic text-2xl font-black mt-5 mb-3"
-          loading={movieQuery.isLoading}
-          text={movieQuery.data?.tagline}
+          loading={mediaQuery.isLoading}
+          text={mediaQuery.data?.tagline}
         />
         <LoadingParagraph
-          loading={movieQuery.isLoading}
-          text={movieQuery.data?.overview}
+          loading={mediaQuery.isLoading}
+          text={mediaQuery.data?.overview}
         />
 
-        <Backdrops id={id} />
+        <Backdrops id={id} mediaType={mediaType} />
 
-        {movieQuery.isSuccess && movieQuery.data.imdb_id && (
-          <MovieTorrents
-            imdbId={movieQuery.data.imdb_id}
-            title={`${movieQuery.data.title} (${movieQuery.data.release.year})`}
-          />
+        {mediaQuery.isSuccess && mediaQuery.data.imdb_id && (
+          <MovieTorrents tmdbId={id} imdbId={mediaQuery.data.imdb_id} />
         )}
       </div>
     </div>
   );
 }
 
-function Backdrops({ id }: { id: number }) {
-  const imagesQuery = useMovieImagesQuery({ id: id });
+function Backdrops({ id, mediaType }: { id: number; mediaType: MediaType }) {
+  const queries = {
+    movie: useMovieImagesQuery,
+    show: useShowImagesQuery,
+  };
+
+  const imagesQuery = queries[mediaType]({ id: id });
 
   if (imagesQuery.isError || imagesQuery.isUninitialized) {
     // TODO: Handle errors
