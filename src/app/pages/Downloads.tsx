@@ -20,7 +20,9 @@ import { decodeData } from "../../utils/data-encoding";
 export const dataKey = "vuetrine-data:";
 
 export function Downloads() {
-  const donwloadsQuery = useDownloadsQuery();
+  const donwloadsQuery = useDownloadsQuery(undefined, {
+    pollingInterval: 15 * 1000,
+  });
 
   const Base = ({ children }: { children: React.ReactNode }) => (
     <div>
@@ -154,6 +156,14 @@ function MediaDownload({
           loading={mediaQuery.isLoading}
           text={mediaQuery.data?.title}
         />
+        <div className="w-full bg-white h-1 my-1">
+          <div
+            className="h-full bg-green-500"
+            style={{
+              width: `${Math.max(4, download.percentDone * 100)}%`,
+            }}
+          ></div>
+        </div>
       </div>
       <div className="m-auto">
         <Icon />
