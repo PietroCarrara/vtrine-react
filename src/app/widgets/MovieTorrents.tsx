@@ -1,7 +1,12 @@
-import { VscAdd } from "react-icons/vsc";
-import { useMovieQuery } from "../../redux/torrentio";
+import { VscAdd, VscCheck, VscLoading } from "react-icons/vsc";
+import { MovieResults, useMovieQuery } from "../../redux/torrentio";
 import { LoadingParagraph } from "../components/LoadingParagraph";
-import { useAddDownloadMutation } from "../../redux/transmission";
+import {
+  useAddDownloadMutation,
+  useDownloadSetMutation,
+} from "../../redux/transmission";
+import { encodeData } from "../../utils/data-encoding";
+import { dataKey } from "../pages/Downloads";
 
 const trackers = [
   "udp://open.demonii.com:1337/announce",
@@ -15,14 +20,13 @@ const trackers = [
 ];
 
 export function MovieTorrents({
+  tmdbId,
   imdbId,
-  title,
 }: {
+  tmdbId: number;
   imdbId: string;
-  title: string;
 }) {
   const downloadsQuery = useMovieQuery(imdbId);
-  const [addTorrent] = useAddDownloadMutation();
   const header = <h2 className="text-xl font-black my-3">Downloads</h2>;
 
   if (downloadsQuery.isError) {
@@ -54,31 +58,73 @@ export function MovieTorrents({
       {header}
       <div className="md:grid md:grid-cols-3 md:gap-x-3">
         {downloadsQuery.data.streams.map((s) => (
-          <Box key={s.infoHash}>
-            <div className="grid grid-cols-5">
-              <span
-                className="col-span-4"
-                style={{ overflowWrap: "break-word" }}
-              >
-                {s.title}
-              </span>
-              <span
-                className="bg-green-500 rounded-full shadow p-2 m-auto cursor-pointer"
-                onClick={() => {
-                  const magnet = `magnet:?xt=urn:btih:${
-                    s.infoHash
-                  }&dn=${title}&tr=${trackers.join("&tr=")}`;
-
-                  addTorrent({ magnet });
-                }}
-              >
-                <VscAdd className="m-auto" />
-              </span>
-            </div>
-          </Box>
+          <DownloadItem {...s} tmdbId={tmdbId} />
         ))}
       </div>
     </div>
+  );
+}
+
+function DownloadItem({
+  infoHash,
+  title,
+  tmdbId,
+}: MovieResults["streams"][number] & { tmdbId: number }) {
+  const [addTorrent, addTorrentStatus] = useAddDownloadMutation();
+  const [setTorrent] = useDownloadSetMutation();
+
+  return (
+    <Box key={infoHash}>
+      <div className="grid grid-cols-5">
+        <span className="col-span-4" style={{ overflowWrap: "break-word" }}>
+          {title}
+        </span>
+        <span
+          className="bg-green-500 rounded-full shadow p-2 m-auto cursor-pointer"
+          onClick={async () => {
+            if (addTorrentStatus.isLoading) {
+              return;
+            }
+
+            const magnet = `magnet:?xt=urn:btih:${encodeURIComponent(
+              infoHash
+            )}&dn=${encodeURIComponent(title)}&tr=${trackers
+              .map(encodeURIComponent)
+              .join("&tr=")}`;
+
+            const response = await addTorrent({
+              magnet,
+            });
+
+            if ("data" in response) {
+              const download =
+                "torrent-added" in response.data
+                  ? response.data["torrent-added"]
+                  : response.data["torrent-duplicate"];
+
+              await setTorrent({
+                ids: [download.id],
+                labels: [
+                  dataKey +
+                    encodeData({
+                      type: "movie",
+                      tmdb: tmdbId,
+                    }),
+                ],
+              });
+            }
+          }}
+        >
+          {addTorrentStatus.isLoading ? (
+            <VscLoading className="m-auto animate-spin" />
+          ) : addTorrentStatus.isSuccess ? (
+            <VscCheck className="m-auto" />
+          ) : (
+            <VscAdd className="m-auto" />
+          )}
+        </span>
+      </div>
+    </Box>
   );
 }
 

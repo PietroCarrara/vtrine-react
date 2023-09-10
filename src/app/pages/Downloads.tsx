@@ -4,7 +4,6 @@ import {
   useDownloadsQuery,
 } from "../../redux/transmission";
 import { LoadingMediaCard } from "../widgets/MediaCard";
-import { Buffer } from "buffer";
 import {
   MediaType,
   imageURL,
@@ -16,9 +15,9 @@ import {
 import { VscCheck, VscCloudDownload, VscDebugStop } from "react-icons/vsc";
 import { LoadingImage } from "../components/LoadingImage";
 import { LoadingText } from "../components/LoadingText";
+import { decodeData } from "../../utils/data-encoding";
 
-const tmdbIdKey = "tmdb-id:";
-const legacyKey = "vuetrine-data:";
+export const dataKey = "vuetrine-data:";
 
 export function Downloads() {
   const donwloadsQuery = useDownloadsQuery();
@@ -50,30 +49,21 @@ export function Downloads() {
   const mediasDownloading = donwloadsQuery.data
     .map((d) => {
       // Fetch json metadata from torrent via "tags"
-      const label = d.labels.find((l) => l.startsWith(tmdbIdKey));
-      const legacyLabel = d.labels.find((l) => l.startsWith(legacyKey));
-      const json = label
-        ? label.substring(tmdbIdKey.length)
-        : legacyLabel
-        ? legacyLabel.substring(legacyKey.length)
-        : undefined;
+      const label = d.labels.find((l) => l.startsWith(dataKey));
+      const json = label ? label.substring(dataKey.length) : undefined;
 
       if (!json) {
         return undefined;
       }
 
-      const str = Buffer.from(json, "base64").toString("utf-8");
-      const obj = JSON.parse(str);
-      if (
-        typeof obj.tmdb !== "number" ||
-        !["show", "movie"].includes(obj.type)
-      ) {
+      const obj = decodeData(json);
+      if (!obj) {
         return undefined;
       }
 
       return {
-        tmdb: obj.tmdb as number,
-        type: obj.type as "show" | "movie",
+        tmdb: obj.tmdb,
+        type: obj.type,
         download: d,
         downloadId: d.id,
         completion: d.percentDone,

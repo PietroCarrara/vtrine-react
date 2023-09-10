@@ -19,6 +19,8 @@ const movieResults = z.object({
     .array(),
 });
 
+export type MovieResults = z.infer<typeof movieResults>;
+
 export const torrentio = createApi({
   reducerPath: "torrentio-api",
   baseQuery: fetchBaseQuery({

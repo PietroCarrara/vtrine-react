@@ -52,14 +52,11 @@ const torrents = z
   .array();
 export type TransmissionDownload = z.infer<typeof torrents>[number];
 
-function successOf<T extends z.ZodTypeAny, K extends string>(obj: T, key: K) {
-  return z.object({
-    result: z.literal("success"),
-    arguments: z.object({
-      [key]: obj,
-    }),
-  });
-}
+const addedTorrent = z.object({
+  hashString: z.string(),
+  id: z.number().int(),
+  name: z.string(),
+});
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `${process.env.REACT_APP_TRANSMISSION_HOST}/${process.env.REACT_APP_TRANSMISSION_BASE_URL}`,
@@ -107,6 +104,7 @@ const baseQueryWithAuth: BaseQueryFn<FetchArgs | string> = async (
 export const transmission = createApi({
   reducerPath: "transmission-api",
   baseQuery: baseQueryWithAuth,
+  tagTypes: ["downloads"],
   endpoints: (builder) => ({
     downloads: builder.query({
       query: (_: void) => ({
@@ -119,7 +117,15 @@ export const transmission = createApi({
         },
       }),
       transformResponse: (base) =>
-        successOf(torrents, "torrents").parse(base).arguments.torrents,
+        z
+          .object({
+            result: z.literal("success"),
+            arguments: z.object({
+              torrents,
+            }),
+          })
+          .parse(base).arguments.torrents,
+      providesTags: ["downloads"],
     }),
 
     addDownload: builder.mutation({
@@ -139,8 +145,44 @@ export const transmission = createApi({
           },
         },
       }),
+      transformResponse: (base) =>
+        z
+          .union([
+            z.object({
+              result: z.literal("success"),
+              arguments: z.object({
+                "torrent-added": addedTorrent,
+              }),
+            }),
+            z.object({
+              result: z.literal("success"),
+              arguments: z.object({
+                "torrent-duplicate": addedTorrent,
+              }),
+            }),
+          ])
+          .parse(base).arguments,
+      invalidatesTags: ["downloads"],
+    }),
+
+    downloadSet: builder.mutation({
+      query: ({ ids, labels }: { ids: number[]; labels?: string[] }) => ({
+        url: "/",
+        body: {
+          method: "torrent-set",
+          arguments: {
+            ids,
+            labels,
+          },
+        },
+      }),
+      invalidatesTags: ["downloads"],
     }),
   }),
 });
 
-export const { useDownloadsQuery, useAddDownloadMutation } = transmission;
+export const {
+  useDownloadsQuery,
+  useAddDownloadMutation,
+  useDownloadSetMutation,
+} = transmission;
