@@ -166,6 +166,7 @@ function Backdrops({ id, mediaType }: { id: number; mediaType: MediaType }) {
 
         return (
           <LoadingImage
+            key={i}
             className={
               size === "big" ? "row-span-2 col-span-2 rounded-sm" : "rounded-sm"
             }

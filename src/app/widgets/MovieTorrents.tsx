@@ -58,7 +58,7 @@ export function MovieTorrents({
       {header}
       <div className="md:grid md:grid-cols-3 md:gap-x-3">
         {downloadsQuery.data.streams.map((s) => (
-          <DownloadItem {...s} tmdbId={tmdbId} />
+          <DownloadItem {...s} key={s.title} tmdbId={tmdbId} />
         ))}
       </div>
     </div>
@@ -74,7 +74,7 @@ function DownloadItem({
   const [setTorrent] = useDownloadSetMutation();
 
   return (
-    <Box key={infoHash}>
+    <Box>
       <div className="grid grid-cols-5">
         <span className="col-span-4" style={{ overflowWrap: "break-word" }}>
           {title}
