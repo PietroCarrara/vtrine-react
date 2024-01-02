@@ -125,8 +125,6 @@ function MediaDownload({
   const mediaQuery = queries[mediaType](mediaId);
   const imageQuery = imageQueries[mediaType]({ id: mediaId });
 
-  console.log({ title: mediaQuery.data?.title, img: imageQuery.data });
-
   // First backdrop with a language or undefined
   const image = imageQuery.data?.backdrops
     .slice()
