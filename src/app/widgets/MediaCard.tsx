@@ -33,7 +33,7 @@ export function MediaCard({ id, type }: { id: number; type: MediaType }) {
   }
 
   return (
-    <ShowMediaCard
+    <DisplayMediaCard
       media={{
         ...query.data,
         state: "loaded",
@@ -44,10 +44,10 @@ export function MediaCard({ id, type }: { id: number; type: MediaType }) {
 }
 
 export function LoadingMediaCard() {
-  return <ShowMediaCard media={{ state: "loading" }} />;
+  return <DisplayMediaCard media={{ state: "loading" }} />;
 }
 
-export function ShowMediaCard({
+export function DisplayMediaCard({
   media,
 }: {
   media:
@@ -55,7 +55,7 @@ export function ShowMediaCard({
     | {
         state: "loaded";
         id: number;
-        poster_path?: string;
+        poster_path?: string | null;
         vote_average: number;
         title: string;
         release?: { year: number };

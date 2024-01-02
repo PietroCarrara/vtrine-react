@@ -3,7 +3,7 @@ import {
   useTrendingShowsQuery,
 } from "../../redux/tmdb";
 import { range } from "../../utils/utils";
-import { LoadingMediaCard, ShowMediaCard } from "../widgets/MediaCard";
+import { LoadingMediaCard, DisplayMediaCard } from "../widgets/MediaCard";
 import { Sidescroller } from "../components/Sidescroller";
 
 export function Explore() {
@@ -29,7 +29,7 @@ export function Explore() {
             range(5).map((i) => <LoadingMediaCard key={i} />)}
           {!trendingMovies.isLoading &&
             trendingMovies.data.results.map((m) => (
-              <ShowMediaCard
+              <DisplayMediaCard
                 key={m.id}
                 media={{
                   ...m,
@@ -48,7 +48,7 @@ export function Explore() {
             range(5).map((i) => <LoadingMediaCard key={i} />)}
           {!trendingShows.isLoading &&
             trendingShows.data.results.map((m) => (
-              <ShowMediaCard
+              <DisplayMediaCard
                 key={m.id}
                 media={{
                   ...m,

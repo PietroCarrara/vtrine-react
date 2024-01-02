@@ -7,38 +7,41 @@ const basicMovieDetails = z
   .object({
     id: z.number().int(),
     title: z.string(),
-    backdrop_path: z.string().optional(),
-    poster_path: z.string().optional(),
+    backdrop_path: z.string().optional().nullable(),
+    poster_path: z.string().optional().nullable(),
     original_language: z.string(),
     original_title: z.string(),
     overview: z.string(),
-    media_type: z.string().optional(),
     popularity: z.number(),
-    release_date: z.string().pipe(z.coerce.date()),
+    release_date: z.string(),
     video: z.boolean(),
     vote_average: z.number(),
     vote_count: z.number().int(),
   })
-  .transform((res) => ({
-    ...res,
-    release_date: undefined,
-    release: {
-      year: res.release_date.getFullYear(),
-      month: res.release_date.getMonth(),
-      day: res.release_date.getDate(),
-    },
-  }));
+  .transform((res) => {
+    const dateParts = res.release_date.split("-").map((x) => parseInt(x, 10));
+
+    const release =
+      dateParts.length !== 3 || dateParts.some((x) => isNaN(x))
+        ? undefined
+        : {
+            year: dateParts[0],
+            month: dateParts[1],
+            day: dateParts[2],
+          };
+
+    return { ...res, release_date: undefined, release };
+  });
 
 const basicShowDetails = z
   .object({
     id: z.number().int(),
     name: z.string(),
-    backdrop_path: z.string().optional(),
-    poster_path: z.string().optional(),
+    backdrop_path: z.string().optional().nullable(),
+    poster_path: z.string().optional().nullable(),
     original_language: z.string(),
     original_name: z.string(),
     overview: z.string(),
-    media_type: z.string().optional(),
     popularity: z.number(),
     first_air_date: z.string(),
     vote_average: z.number(),
@@ -116,6 +119,25 @@ const images = z.object({
   posters: tmdbImage.array(),
 });
 
+const multiSearchResultItem = z.union([
+  basicMovieDetails.and(
+    z.object({
+      media_type: z.literal("movie"),
+    })
+  ),
+  basicShowDetails.and(
+    z.object({
+      media_type: z.literal("tv"),
+    })
+  ),
+]);
+const multiSearchResult = z.object({
+  page: z.number().int(),
+  total_pages: z.number().int(),
+  total_results: z.number().int(),
+  results: multiSearchResultItem.array(),
+});
+
 export const tmdb = createApi({
   reducerPath: "tmdb-api",
   baseQuery: fetchBaseQuery({
@@ -186,6 +208,17 @@ export const tmdb = createApi({
       }),
       transformResponse: (baseReturn) => images.parse(baseReturn),
     }),
+
+    multiSearch: builder.query({
+      query: ({ query, page = 1 }: { query: string; page?: number }) => ({
+        url: `search/multi`,
+        params: {
+          query,
+          page,
+        },
+      }),
+      transformResponse: (baseReturn) => multiSearchResult.parse(baseReturn),
+    }),
   }),
 });
 
@@ -207,4 +240,5 @@ export const {
   useTrendingShowsQuery,
   useMovieImagesQuery,
   useShowImagesQuery,
+  useMultiSearchQuery,
 } = tmdb;

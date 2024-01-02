@@ -78,7 +78,7 @@ export function Media({ id, mediaType }: { id: number; mediaType: MediaType }) {
             />
             <LoadingText
               loading={mediaQuery.isLoading}
-              text={mediaQuery.data?.release.year.toString()}
+              text={mediaQuery.data?.release?.year.toString()}
               className="block text-lg mb-1"
             />
             <LoadingText
