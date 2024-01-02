@@ -12,7 +12,7 @@ import { LoadingRating } from "../widgets/LoadingRating";
 import { LoadingText } from "../components/LoadingText";
 import { MovieTorrents } from "../widgets/MovieTorrents";
 
-export function Movie({ id, mediaType }: { id: number; mediaType: MediaType }) {
+export function Media({ id, mediaType }: { id: number; mediaType: MediaType }) {
   const queries = {
     movie: useMovieDetailsQuery,
     show: useShowDetailsQuery,

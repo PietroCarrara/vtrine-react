@@ -5,8 +5,9 @@ import {
 } from "react-router-dom";
 import { Root } from "./pages/Root";
 import { Explore } from "./pages/Explore";
-import { Movie } from "./pages/Movie";
+import { Media } from "./pages/Media";
 import { Downloads } from "./pages/Downloads";
+import { Search } from "./pages/Search";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
         path: "/downloads",
         element: <Downloads />,
       },
+      {
+        path: "/search",
+        element: <Search />,
+      },
     ],
   },
 ]);
@@ -47,7 +52,7 @@ function MovieLoader() {
   const idStr = parts[parts.length - 1];
   const id = parseInt(idStr);
 
-  return <Movie id={id} mediaType="movie" />;
+  return <Media id={id} mediaType="movie" />;
 }
 
 function ShowLoader() {
@@ -60,7 +65,7 @@ function ShowLoader() {
   const idStr = parts[parts.length - 1];
   const id = parseInt(idStr);
 
-  return <Movie id={id} mediaType="show" />;
+  return <Media id={id} mediaType="show" />;
 }
 
 export default App;
