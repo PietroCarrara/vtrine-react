@@ -8,13 +8,15 @@ const movieResults = z.object({
       title: z.string(),
       infoHash: z.string(),
       fileIdx: z.number().int().optional(),
-      behaviorHints: z.object({
-        bingeGroup: z
-          .string()
-          .transform((s) => s.split("|"))
-          .nullable()
-          .optional(),
-      }),
+      behaviorHints: z
+        .object({
+          bingeGroup: z
+            .string()
+            .transform((s) => s.split("|"))
+            .nullable()
+            .optional(),
+        })
+        .optional(),
     })
     .array(),
 });

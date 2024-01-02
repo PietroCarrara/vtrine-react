@@ -40,21 +40,30 @@ const basicShowDetails = z
     overview: z.string(),
     media_type: z.string().optional(),
     popularity: z.number(),
-    first_air_date: z.string().pipe(z.coerce.date()),
+    first_air_date: z.string(),
     vote_average: z.number(),
     vote_count: z.number().int(),
   })
-  .transform((res) => ({
-    ...res,
-    name: undefined,
-    first_air_date: undefined,
-    title: res.name,
-    release: {
-      year: res.first_air_date.getFullYear(),
-      month: res.first_air_date.getMonth(),
-      day: res.first_air_date.getDate(),
-    },
-  }));
+  .transform((res) => {
+    const dateParts = res.first_air_date.split("-").map((x) => parseInt(x, 10));
+
+    const release =
+      dateParts.length !== 3 || dateParts.some((x) => isNaN(x))
+        ? undefined
+        : {
+            year: dateParts[0],
+            month: dateParts[1],
+            day: dateParts[2],
+          };
+
+    return {
+      ...res,
+      name: undefined,
+      first_air_date: undefined,
+      title: res.name,
+      release,
+    };
+  });
 
 const movieDetails = basicMovieDetails.and(
   z.object({

@@ -58,7 +58,7 @@ export function ShowMediaCard({
         poster_path?: string;
         vote_average: number;
         title: string;
-        release: { year: number };
+        release?: { year: number };
         type: MediaType;
       };
 }) {
@@ -100,14 +100,18 @@ export function ShowMediaCard({
           loading={media.state === "loading"}
           rating={media.state === "loaded" ? media.vote_average : undefined}
         />
-        <LoadingText
-          className="float-right"
-          loadedClassName="mr-2 text-neutral-400"
-          loading={media.state === "loading"}
-          text={
-            media.state === "loaded" ? media.release.year.toString() : undefined
-          }
-        />
+        {(media.state !== "loaded" || media.release?.year !== undefined) && (
+          <LoadingText
+            className="float-right"
+            loadedClassName="mr-2 text-neutral-400"
+            loading={media.state === "loading"}
+            text={
+              media.state === "loaded"
+                ? media.release?.year.toString()
+                : undefined
+            }
+          />
+        )}
       </div>
     </div>
   );
