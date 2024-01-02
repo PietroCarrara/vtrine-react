@@ -27,15 +27,14 @@ export function Explore() {
         <div className="flex space-x-4">
           {trendingMovies.isFetching &&
             range(5).map((i) => (
-              <Container>
-                <LoadingMediaCard key={i} />
+              <Container key={i}>
+                <LoadingMediaCard />
               </Container>
             ))}
           {!trendingMovies.isLoading &&
             trendingMovies.data.results.map((m) => (
-              <Container>
+              <Container key={m.id}>
                 <DisplayMediaCard
-                  key={m.id}
                   media={{
                     ...m,
                     state: "loaded",
@@ -52,15 +51,14 @@ export function Explore() {
         <div className="flex space-x-4">
           {trendingShows.isFetching &&
             range(5).map((i) => (
-              <Container>
-                <LoadingMediaCard key={i} />
+              <Container key={i}>
+                <LoadingMediaCard />
               </Container>
             ))}
           {!trendingShows.isLoading &&
             trendingShows.data.results.map((m) => (
-              <Container>
+              <Container key={m.id}>
                 <DisplayMediaCard
-                  key={m.id}
                   media={{
                     ...m,
                     state: "loaded",

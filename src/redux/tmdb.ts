@@ -3,6 +3,17 @@ import { z } from "zod";
 
 export type MediaType = "movie" | "show";
 
+const basicPersonDetails = z.object({
+  adult: z.boolean(),
+  id: z.number().int(),
+  name: z.string(),
+  original_name: z.string(),
+  popularity: z.number(),
+  gender: z.number(),
+  known_for_department: z.string(),
+  profile_path: z.string().optional().nullable(),
+});
+
 const basicMovieDetails = z
   .object({
     id: z.number().int(),
@@ -130,6 +141,11 @@ const multiSearchResultItem = z.union([
       media_type: z.literal("tv"),
     })
   ),
+  basicPersonDetails.and(
+    z.object({
+      media_type: z.literal("person"),
+    })
+  ),
 ]);
 const multiSearchResult = z.object({
   page: z.number().int(),
@@ -241,4 +257,5 @@ export const {
   useMovieImagesQuery,
   useShowImagesQuery,
   useMultiSearchQuery,
+  useLazyMultiSearchQuery,
 } = tmdb;

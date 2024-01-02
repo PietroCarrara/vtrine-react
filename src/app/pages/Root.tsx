@@ -1,11 +1,19 @@
 import { VscLibrary, VscMap, VscSearch } from "react-icons/vsc";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { classes } from "../../utils/utils";
+import { SearchBar } from "../widgets/SearchBar";
 
 export function Root() {
+  const { pathname } = useLocation();
+
   return (
     <>
       <div className="mb-16">
+        {(pathname === "/search" || pathname === "/") && (
+          <div className="mt-3 mx-3">
+            <SearchBar />
+          </div>
+        )}
         <Outlet />
       </div>
       <div className="fixed bottom-0 w-screen bg-neutral-100 text-neutral-900 py-1 h-14 grid grid-cols-3">
