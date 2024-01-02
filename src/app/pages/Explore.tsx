@@ -26,17 +26,23 @@ export function Explore() {
       <Sidescroller>
         <div className="flex space-x-4">
           {trendingMovies.isFetching &&
-            range(5).map((i) => <LoadingMediaCard key={i} />)}
+            range(5).map((i) => (
+              <Container>
+                <LoadingMediaCard key={i} />
+              </Container>
+            ))}
           {!trendingMovies.isLoading &&
             trendingMovies.data.results.map((m) => (
-              <DisplayMediaCard
-                key={m.id}
-                media={{
-                  ...m,
-                  state: "loaded",
-                  type: "movie",
-                }}
-              />
+              <Container>
+                <DisplayMediaCard
+                  key={m.id}
+                  media={{
+                    ...m,
+                    state: "loaded",
+                    type: "movie",
+                  }}
+                />
+              </Container>
             ))}
         </div>
       </Sidescroller>
@@ -45,20 +51,30 @@ export function Explore() {
       <Sidescroller>
         <div className="flex space-x-4">
           {trendingShows.isFetching &&
-            range(5).map((i) => <LoadingMediaCard key={i} />)}
+            range(5).map((i) => (
+              <Container>
+                <LoadingMediaCard key={i} />
+              </Container>
+            ))}
           {!trendingShows.isLoading &&
             trendingShows.data.results.map((m) => (
-              <DisplayMediaCard
-                key={m.id}
-                media={{
-                  ...m,
-                  state: "loaded",
-                  type: "show",
-                }}
-              />
+              <Container>
+                <DisplayMediaCard
+                  key={m.id}
+                  media={{
+                    ...m,
+                    state: "loaded",
+                    type: "show",
+                  }}
+                />
+              </Container>
             ))}
         </div>
       </Sidescroller>
     </div>
   );
+}
+
+function Container({ children }: { children: React.ReactNode }) {
+  return <div style={{ width: "12rem", minWidth: "12rem" }}>{children}</div>;
 }

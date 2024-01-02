@@ -5,15 +5,11 @@ export function LoadingImage({
   text,
   loading,
   className = "",
-  width,
-  height,
 }: {
   url?: string;
   text?: string;
   loading: boolean;
   className?: string;
-  width: number | string;
-  height: number | string;
 }) {
   return (
     <div
@@ -25,10 +21,8 @@ export function LoadingImage({
         className
       }
       style={{
-        width,
-        height,
-        minWidth: width,
-        minHeight: height,
+        width: "100%",
+        height: "100%",
         backgroundImage: url ? `url(${url})` : undefined,
       }}
     >

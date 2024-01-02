@@ -144,13 +144,13 @@ function MediaDownload({
 
   return (
     <div className="w-full grid grid-cols-12 gap-2">
-      <LoadingImage
-        className="rounded col-span-5"
-        width="100%"
-        height="5rem"
-        loading={imageQuery.isLoading}
-        url={image && imageURL(image.file_path, "w300")}
-      />
+      <div className="col-span-5" style={{ height: "5rem", width: "100%" }}>
+        <LoadingImage
+          className="rounded"
+          loading={imageQuery.isLoading}
+          url={image && imageURL(image.file_path, "w300")}
+        />
+      </div>
       <div className="col-span-5 m-auto w-full">
         <LoadingText
           className="font-bold text-sm"

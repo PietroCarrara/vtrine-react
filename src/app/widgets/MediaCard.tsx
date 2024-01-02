@@ -76,7 +76,12 @@ export function DisplayMediaCard({
       : (e: JSX.Element) => e;
 
   return makeLink(
-    <div style={{ width: "12rem", minWidth: "12rem" }}>
+    <div
+      style={{
+        aspectRatio: "12 / 18",
+        width: "100%",
+      }}
+    >
       <LoadingImage
         loading={media.state === "loading"}
         url={
@@ -84,15 +89,12 @@ export function DisplayMediaCard({
             ? imageURL(media.poster_path, "w300")
             : undefined
         }
-        height="18rem"
-        width="100%"
-        className="rounded mb-1"
-      />
-
-      <LoadingText
-        className="font-bold text-lg line-clamp-1 mb-1 w-100"
-        loading={media.state === "loading"}
-        text={media.state === "loaded" ? media.title : undefined}
+        text={
+          media.state === "loaded" && !media.poster_path
+            ? media.title
+            : undefined
+        }
+        className="rounded mb-1 shadow-md"
       />
 
       <div>

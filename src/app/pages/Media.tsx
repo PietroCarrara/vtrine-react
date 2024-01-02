@@ -53,23 +53,26 @@ export function Media({ id, mediaType }: { id: number; mediaType: MediaType }) {
       </div>
 
       <div className="px-3">
-        <div className="flex space-x-3 mb-4" style={{ marginTop: "6rem" }}>
-          <LoadingImage
-            loading={mediaQuery.isLoading}
-            width={"8rem"}
-            height={"12rem"}
-            className="rounded"
-            url={
-              mediaQuery.isSuccess && mediaQuery.data.poster_path
-                ? imageURL(mediaQuery.data.poster_path, "w780")
-                : undefined
-            }
-            text={
-              mediaQuery.isSuccess && !mediaQuery.data.poster_path
-                ? "No Poster"
-                : undefined
-            }
-          />
+        <div
+          className="grid grid-cols-2 gap-4 mb-4"
+          style={{ marginTop: "6rem" }}
+        >
+          <div style={{ aspectRatio: "12 / 18", width: "100%" }}>
+            <LoadingImage
+              loading={mediaQuery.isLoading}
+              className="rounded shadow-md"
+              url={
+                mediaQuery.isSuccess && mediaQuery.data.poster_path
+                  ? imageURL(mediaQuery.data.poster_path, "w780")
+                  : undefined
+              }
+              text={
+                mediaQuery.isSuccess && !mediaQuery.data.poster_path
+                  ? "No Poster"
+                  : undefined
+              }
+            />
+          </div>
           <div>
             <LoadingText
               loading={mediaQuery.isLoading}
@@ -143,38 +146,23 @@ function Backdrops({ id, mediaType }: { id: number; mediaType: MediaType }) {
         })
         // Skip the first image if there's more than 3
         // (it's probably the background shown behind the poster)
-        .slice(0, 4)
+        .slice(0, 5)
         .reverse()
-        .slice(0, 3)
+        .slice(0, 4)
         .reverse();
 
-  const sizes = {
-    big: {
-      width: "100%",
-      height: "100%",
-    },
-    small: {
-      width: "100%",
-      height: "5rem",
-    },
-  };
-
   return (
-    <div className="py-2 grid grid-rows-2 grid-flow-col gap-1">
+    <div className="py-2 grid grid-cols-2 grid-flow-row gap-1">
       {images.map((image, i) => {
-        const size = i === 0 ? "big" : "small";
-
         return (
-          <LoadingImage
-            key={i}
-            className={
-              size === "big" ? "row-span-2 col-span-2 rounded-sm" : "rounded-sm"
-            }
-            width={sizes[size].width}
-            height={sizes[size].height}
-            loading={image === undefined}
-            url={image && imageURL(image.file_path, "w780")}
-          />
+          <div className={"grid"} style={{ aspectRatio: "16 / 9" }}>
+            <LoadingImage
+              key={i}
+              className="rounded-sm"
+              loading={image === undefined}
+              url={image && imageURL(image.file_path, "w780")}
+            />
+          </div>
         );
       })}
     </div>

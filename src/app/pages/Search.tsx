@@ -1,11 +1,7 @@
 import { useSearch } from "../../redux/search";
 import { useMultiSearchQuery } from "../../redux/tmdb";
 import { range } from "../../utils/utils";
-import {
-  DisplayMediaCard,
-  LoadingMediaCard,
-  MediaCard,
-} from "../widgets/MediaCard";
+import { DisplayMediaCard, LoadingMediaCard } from "../widgets/MediaCard";
 
 const map = {
   tv: "show",
@@ -46,5 +42,7 @@ export function Search() {
 }
 
 function Container({ children }: { children: React.ReactNode[] }) {
-  return <div className="grid grid-rows-4 grid-flow-col gap-4">{children}</div>;
+  return (
+    <div className="grid grid-cols-2 grid-flow-row gap-4 m-4">{children}</div>
+  );
 }
