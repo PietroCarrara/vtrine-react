@@ -26,8 +26,12 @@ function Results() {
     triggerSearch({
       query: search,
     });
+    // We only want to run once, therefore we use the empty array
+    // eslint-disable-next-line
   }, []);
 
+  // useCallback expect an inline function (why?)
+  // eslint-disable-next-line
   const debouncedSearch = useCallback(
     debounce((search: string) => {
       setIsTyping(false);
@@ -37,11 +41,10 @@ function Results() {
     }, 300),
     [triggerSearch]
   );
-  const doSearch = async () => {
+  useEffect(() => {
     setIsTyping(true);
     debouncedSearch(search);
-  };
-  useEffect(() => void doSearch(), [search]);
+  }, [search, debouncedSearch, setIsTyping]);
 
   if (searchQuery.isError) {
     // TODO: Deal with errors
