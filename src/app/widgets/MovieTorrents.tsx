@@ -94,6 +94,7 @@ function DownloadItem({
 
             const response = await addTorrent({
               magnet,
+              downloadDir: process.env.REACT_APP_MOVIE_DOWNLOAD_DIR,
             });
 
             if ("data" in response) {
