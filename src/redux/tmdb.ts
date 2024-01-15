@@ -130,6 +130,38 @@ const images = z.object({
   posters: tmdbImage.array(),
 });
 
+const videoResults = z.object({
+  id: z.number().int(),
+  results: z
+    .object({
+      iso_639_1: z.string(),
+      iso_3166_1: z.string(),
+      name: z.string(),
+      key: z.string(),
+      site: z.union([z.literal("YouTube"), z.literal("Vimeo")]),
+      size: z.union([
+        z.literal(360),
+        z.literal(480),
+        z.literal(720),
+        z.literal(1080),
+        z.literal(2160),
+      ]),
+      type: z.union([
+        z.literal("Featurette"),
+        z.literal("Trailer"),
+        z.literal("Teaser"),
+        z.literal("Clip"),
+        z.literal("Behind the Scenes"),
+        z.literal("Bloopers"),
+        z.literal("Opening Credits"),
+      ]),
+      official: z.boolean(),
+      published_at: z.string(),
+      id: z.string(),
+    })
+    .array(),
+});
+
 const multiSearchResultItem = z.union([
   basicMovieDetails.and(
     z.object({
@@ -235,6 +267,12 @@ export const tmdb = createApi({
       }),
       transformResponse: (baseReturn) => multiSearchResult.parse(baseReturn),
     }),
+
+    videos: builder.query({
+      query: (args: { id: number; type: "tv" | "movie" }) =>
+        `${args.type}/${args.id}/videos`,
+      transformResponse: (base) => videoResults.parse(base),
+    }),
   }),
 });
 
@@ -258,4 +296,5 @@ export const {
   useShowImagesQuery,
   useMultiSearchQuery,
   useLazyMultiSearchQuery,
+  useVideosQuery,
 } = tmdb;

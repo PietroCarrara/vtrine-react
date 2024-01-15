@@ -5,12 +5,14 @@ import {
   useMovieImagesQuery,
   useShowDetailsQuery,
   useShowImagesQuery,
+  useVideosQuery,
 } from "../../redux/tmdb";
 import { LoadingImage } from "../components/LoadingImage";
 import { LoadingParagraph } from "../components/LoadingParagraph";
 import { LoadingRating } from "../widgets/LoadingRating";
 import { LoadingText } from "../components/LoadingText";
 import { MovieTorrents } from "../widgets/MovieTorrents";
+import { VscPlayCircle } from "react-icons/vsc";
 
 export function Media({ id, mediaType }: { id: number; mediaType: MediaType }) {
   const queries = {
@@ -19,7 +21,6 @@ export function Media({ id, mediaType }: { id: number; mediaType: MediaType }) {
   };
 
   const mediaQuery = queries[mediaType](id);
-
   if (mediaQuery.isError || mediaQuery.isUninitialized) {
     // TODO: Handle errors
     return <>This is very bad!</>;
@@ -94,6 +95,7 @@ export function Media({ id, mediaType }: { id: number; mediaType: MediaType }) {
               loading={mediaQuery.isLoading}
               rating={mediaQuery.data?.vote_average}
             />
+            <Trailers id={id} mediaType={mediaType} />
           </div>
         </div>
         <LoadingText
@@ -164,6 +166,49 @@ function Backdrops({ id, mediaType }: { id: number; mediaType: MediaType }) {
           </div>
         );
       })}
+    </div>
+  );
+}
+
+function Trailers({ id, mediaType }: { id: number; mediaType: MediaType }) {
+  const videosQuery = useVideosQuery({
+    id,
+    type: mediaType === "show" ? "tv" : mediaType,
+  });
+
+  if (videosQuery.isError) {
+    // TODO: Handle errors
+    return <>This is very bad!</>;
+  }
+
+  if (videosQuery.isLoading || videosQuery.isUninitialized) {
+    return <></>;
+  }
+
+  const trailers = videosQuery.data.results.filter((v) => v.type === "Trailer");
+  const youtube = trailers.find((v) => v.site === "YouTube");
+  const vimeo = trailers.find((v) => v.site === "Vimeo");
+
+  return (
+    <div className="w-full grid-cols-1 grid gap-2 mt-3">
+      {youtube && (
+        <a
+          href={`https://www.youtube.com/watch?v=${youtube.key}`}
+          target="_blank"
+          className="py-2 w-full text-center font-semibold rounded-md bg-red-600"
+        >
+          <VscPlayCircle className="inline" /> YouTube
+        </a>
+      )}
+      {vimeo && (
+        <a
+          href={`https://vimeo.com/${vimeo.key}`}
+          target="_blank"
+          className="py-2 w-full text-center font-semibold rounded-md bg-cyan-600"
+        >
+          <VscPlayCircle className="inline" /> Vimeo
+        </a>
+      )}
     </div>
   );
 }
