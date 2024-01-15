@@ -155,9 +155,8 @@ function Backdrops({ id, mediaType }: { id: number; mediaType: MediaType }) {
     <div className="py-2 grid grid-cols-2 grid-flow-row gap-1">
       {images.map((image, i) => {
         return (
-          <div className={"grid"} style={{ aspectRatio: "16 / 9" }}>
+          <div key={i} className={"grid"} style={{ aspectRatio: "16 / 9" }}>
             <LoadingImage
-              key={i}
               className="rounded-sm"
               loading={image === undefined}
               url={image && imageURL(image.file_path, "w780")}
