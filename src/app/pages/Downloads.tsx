@@ -16,6 +16,8 @@ import { VscCheck, VscCloudDownload, VscDebugStop } from "react-icons/vsc";
 import { LoadingImage } from "../components/LoadingImage";
 import { LoadingText } from "../components/LoadingText";
 import { decodeData } from "../../utils/data-encoding";
+import { Link } from "react-router-dom";
+import { slugify } from "../../utils/utils";
 
 export const dataKey = "vuetrine-data:";
 
@@ -122,6 +124,8 @@ function MediaDownload({
   };
   const Icon = icons[download.status];
 
+  // Okay, this is very dangerous: we are conditionally calling hooks.
+  // TODO: Call them always and choose the right result instead. Use `skip` to avoid excess requests.
   const mediaQuery = queries[mediaType](mediaId);
   const imageQuery = imageQueries[mediaType]({ id: mediaId });
 
@@ -143,11 +147,15 @@ function MediaDownload({
   return (
     <div className="w-full grid grid-cols-12 gap-2">
       <div className="col-span-5" style={{ height: "5rem", width: "100%" }}>
-        <LoadingImage
-          className="rounded"
-          loading={imageQuery.isLoading}
-          url={image && imageURL(image.file_path, "w300")}
-        />
+        <Link
+          to={`/${mediaType}/${slugify(mediaQuery.data?.title)}-${mediaId}`}
+        >
+          <LoadingImage
+            className="rounded"
+            loading={imageQuery.isLoading}
+            url={image && imageURL(image.file_path, "w300")}
+          />
+        </Link>
       </div>
       <div className="col-span-5 m-auto w-full">
         <LoadingText

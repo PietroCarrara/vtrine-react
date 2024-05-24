@@ -12,7 +12,14 @@ export function classes(conditionList: { [className: string]: boolean }) {
   );
 }
 
-export function slugify(str: string) {
+export function slugify(str: undefined): undefined;
+export function slugify(str: string): string;
+export function slugify(str: string | undefined): string | undefined;
+export function slugify(str: string | undefined) {
+  if (str === undefined) {
+    return undefined;
+  }
+
   return str
     .normalize("NFKD") // split accented characters into their base characters and diacritical marks
     .replace(/[\u0300-\u036f]/g, "") // remove all the accents, which happen to be all in the \u03xx UNICODE block.
