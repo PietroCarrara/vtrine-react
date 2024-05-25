@@ -12,7 +12,7 @@ import { LoadingParagraph } from "../components/LoadingParagraph";
 import { LoadingRating } from "../widgets/LoadingRating";
 import { LoadingText } from "../components/LoadingText";
 import { MovieTorrents } from "../widgets/MovieTorrents";
-import { VscPlayCircle } from "react-icons/vsc";
+import { VscFileMedia, VscPlayCircle } from "react-icons/vsc";
 
 export function Media({ id, mediaType }: { id: number; mediaType: MediaType }) {
   const queries = {
@@ -95,7 +95,7 @@ export function Media({ id, mediaType }: { id: number; mediaType: MediaType }) {
               loading={mediaQuery.isLoading}
               rating={mediaQuery.data?.vote_average}
             />
-            <Trailers id={id} mediaType={mediaType} />
+            <Links id={id} mediaType={mediaType} />
           </div>
         </div>
         <LoadingText
@@ -170,7 +170,7 @@ function Backdrops({ id, mediaType }: { id: number; mediaType: MediaType }) {
   );
 }
 
-function Trailers({ id, mediaType }: { id: number; mediaType: MediaType }) {
+function Links({ id, mediaType }: { id: number; mediaType: MediaType }) {
   const videosQuery = useVideosQuery({
     id,
     type: mediaType === "show" ? "tv" : mediaType,
@@ -191,6 +191,15 @@ function Trailers({ id, mediaType }: { id: number; mediaType: MediaType }) {
 
   return (
     <div className="w-full grid-cols-1 grid gap-2 mt-3">
+      <a
+        href={`https://www.themoviedb.org/${mediaType}/${id}`}
+        target="_blank"
+        className="py-2 w-full text-center font-semibold rounded-md bg-[#032541]"
+      >
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#C0FECF] to-[#1ED5A9]">
+          TMDB
+        </span>
+      </a>
       {youtube && (
         <a
           href={`https://www.youtube.com/watch?v=${youtube.key}`}
