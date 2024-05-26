@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 export function range(count: number) {
   return Array.apply(null, Array(count)).map((_, i) => i);
 }
@@ -28,4 +31,14 @@ export function slugify(str: string | undefined) {
     .replace(/[^a-z0-9 -]/g, "") // remove non-alphanumeric characters
     .replace(/\s+/g, "-") // replace spaces with hyphens
     .replace(/-+/g, "-"); // remove consecutive hyphens
+}
+
+export function Redirect({ url }: { url: string }) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate(url);
+  }, []);
+
+  return <></>;
 }

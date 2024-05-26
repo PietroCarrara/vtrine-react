@@ -273,6 +273,18 @@ export const tmdb = createApi({
         `${args.type}/${args.id}/videos`,
       transformResponse: (base) => videoResults.parse(base),
     }),
+
+    newAuthToken: builder.mutation({
+      query: (_: void) => ({
+        url: "authentication/token/new",
+      }),
+      transformResponse: (res) =>
+        z
+          .object({
+            request_token: z.string(),
+          })
+          .parse(res),
+    }),
   }),
 });
 
@@ -297,4 +309,5 @@ export const {
   useMultiSearchQuery,
   useLazyMultiSearchQuery,
   useVideosQuery,
+  useNewAuthTokenMutation,
 } = tmdb;

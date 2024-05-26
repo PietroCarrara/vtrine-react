@@ -1,4 +1,4 @@
-import { VscLibrary, VscMap, VscSearch } from "react-icons/vsc";
+import { VscLibrary, VscMap, VscPerson, VscSearch } from "react-icons/vsc";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { classes } from "../../utils/utils";
 import { SearchBar } from "../widgets/SearchBar";
@@ -16,16 +16,17 @@ export function Root() {
         )}
         <Outlet />
       </div>
-      <div className="fixed bottom-0 w-screen bg-neutral-100 text-neutral-900 py-1 h-14 grid grid-cols-3">
+      <div className="fixed bottom-0 w-screen bg-neutral-100 text-neutral-900 py-1 h-14 grid grid-cols-4">
         <NavIcon label="Explore" />
         <NavIcon label="Search" />
         <NavIcon label="Downloads" />
+        <NavIcon label="Account" />
       </div>
     </>
   );
 }
 
-type Label = "Explore" | "Search" | "Downloads";
+type Label = "Explore" | "Search" | "Downloads" | "Account";
 function NavIcon({ label }: { label: Label }) {
   const location = useLocation();
 
@@ -33,11 +34,13 @@ function NavIcon({ label }: { label: Label }) {
     Explore: VscMap,
     Search: VscSearch,
     Downloads: VscLibrary,
+    Account: VscPerson,
   };
   const links = {
     Explore: "/",
     Search: "/search",
     Downloads: "/downloads",
+    Account: "/account",
   };
 
   const Icon = icons[label];

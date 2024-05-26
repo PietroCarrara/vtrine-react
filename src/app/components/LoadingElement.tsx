@@ -15,7 +15,8 @@ export function LoadingElement({
     <div
       className={
         classes({
-          [`rounded animate-pulse text-neutral-500`]: loading,
+          [`rounded animate-pulse text-neutral-500 pointer-events-none`]:
+            loading,
           [loadedClassName]: !loading,
         }) + className
       }

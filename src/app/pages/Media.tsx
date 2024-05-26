@@ -12,7 +12,8 @@ import { LoadingParagraph } from "../components/LoadingParagraph";
 import { LoadingRating } from "../widgets/LoadingRating";
 import { LoadingText } from "../components/LoadingText";
 import { MovieTorrents } from "../widgets/MovieTorrents";
-import { VscFileMedia, VscPlayCircle } from "react-icons/vsc";
+import { VscPlayCircle } from "react-icons/vsc";
+import { TMDBButton } from "../components/TMDBButton";
 
 export function Media({ id, mediaType }: { id: number; mediaType: MediaType }) {
   const queries = {
@@ -191,15 +192,10 @@ function Links({ id, mediaType }: { id: number; mediaType: MediaType }) {
 
   return (
     <div className="w-full grid-cols-1 grid gap-2 mt-3">
-      <a
-        href={`https://www.themoviedb.org/${mediaType}/${id}`}
-        target="_blank"
-        className="py-2 w-full text-center font-semibold rounded-md bg-[#032541]"
-      >
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#C0FECF] to-[#1ED5A9]">
-          TMDB
-        </span>
-      </a>
+      <TMDBButton
+        link={`https://www.themoviedb.org/${mediaType}/${id}`}
+        text="TMDB"
+      />
       {youtube && (
         <a
           href={`https://www.youtube.com/watch?v=${youtube.key}`}

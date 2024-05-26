@@ -2,12 +2,15 @@ import {
   RouterProvider,
   createBrowserRouter,
   useParams,
+  useSearchParams,
 } from "react-router-dom";
 import { Root } from "./pages/Root";
 import { Explore } from "./pages/Explore";
 import { Media } from "./pages/Media";
 import { Downloads } from "./pages/Downloads";
 import { Search } from "./pages/Search";
+import { Account, CreateTMDBSession } from "./pages/Account";
+import { Redirect } from "../utils/utils";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +36,14 @@ const router = createBrowserRouter([
       {
         path: "/search",
         element: <Search />,
+      },
+      {
+        path: "/account",
+        element: <Account />,
+      },
+      {
+        path: "/account/create-tmdb-session",
+        element: <TMDBSessionLoader />,
       },
     ],
   },
@@ -66,6 +77,17 @@ function ShowLoader() {
   const id = parseInt(idStr);
 
   return <Media id={id} mediaType="show" />;
+}
+
+function TMDBSessionLoader() {
+  const [searchParams] = useSearchParams();
+  const requestToken = searchParams.get("request_token");
+
+  if (typeof requestToken !== "string") {
+    return <Redirect url="/account" />;
+  }
+
+  return <CreateTMDBSession requestToken={requestToken} />;
 }
 
 export default App;
