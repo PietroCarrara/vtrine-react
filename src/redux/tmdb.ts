@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { z } from "zod";
+import { store } from "./storeHack";
 
 export type MediaType = "movie" | "show";
 
@@ -193,6 +194,21 @@ export const tmdb = createApi({
     headers: {
       Authorization: `Bearer ${process.env.REACT_APP_TMDB_API_KEY}`,
     },
+    fetchFn: (input, init) => {
+      const state = store.getState();
+
+      if (state.auth.authenticated) {
+        const url = new URL(typeof input === "string" ? input : input.url);
+        url.searchParams.append("session_id", state.auth.tmdbSession);
+
+        input =
+          typeof input === "string"
+            ? url.toString()
+            : new Request(url.toString(), input);
+      }
+
+      return fetch(input, init);
+    },
   }),
   endpoints: (builder) => ({
     movieDetails: builder.query({
@@ -285,6 +301,22 @@ export const tmdb = createApi({
           })
           .parse(res),
     }),
+
+    newSession: builder.mutation({
+      query: (requestToken: string) => ({
+        url: "authentication/session/new",
+        method: "POST",
+        body: {
+          request_token: requestToken,
+        },
+      }),
+      transformResponse: (res) =>
+        z
+          .object({
+            session_id: z.string(),
+          })
+          .parse(res),
+    }),
   }),
 });
 
@@ -310,4 +342,5 @@ export const {
   useLazyMultiSearchQuery,
   useVideosQuery,
   useNewAuthTokenMutation,
+  useNewSessionMutation,
 } = tmdb;

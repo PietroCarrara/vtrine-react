@@ -9,7 +9,7 @@ type AuthState =
       tmdbSession: string;
     };
 
-const auth = createSlice({
+export const auth = createSlice({
   initialState: initialState(),
   name: "auth",
   reducers: {
@@ -22,6 +22,8 @@ const auth = createSlice({
     },
   },
 });
+
+export const { authenticate } = auth.actions;
 
 function initialState(): AuthState {
   // TODO: Check on localStorage first
