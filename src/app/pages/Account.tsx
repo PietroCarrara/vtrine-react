@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import {
+  useMyDetailsQuery,
   useNewAuthTokenMutation,
   useNewSessionMutation,
 } from "../../redux/tmdb";
@@ -8,6 +9,8 @@ import { LoadingElement } from "../components/LoadingElement";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { authenticate } from "../../redux/auth.slice";
 import { Redirect } from "../../utils/utils";
+import { LoadingSpinner } from "../components/LoadingSpinner";
+import { ErrorAlert } from "../components/ErrorAlert";
 
 export function Account() {
   const auth = useAppSelector((s) => s.auth);
@@ -20,7 +23,21 @@ export function Account() {
 }
 
 function ProfilePage() {
-  return <>Welcome!</>;
+  const user = useMyDetailsQuery();
+
+  if (user.isLoading || user.isUninitialized) {
+    return <LoadingSpinner />;
+  }
+
+  if (user.isError) {
+    return <ErrorAlert text="An error ocurred when fetching your user data!" />;
+  }
+
+  return (
+    <>
+      <h1 className="text-3xl my-3 mx-3 font-black">{user.data.name}</h1>
+    </>
+  );
 }
 
 function LoginPage() {
@@ -28,7 +45,7 @@ function LoginPage() {
 
   useEffect(() => {
     getNewAuthToken();
-  }, []);
+  }, [getNewAuthToken]);
 
   return (
     <>
@@ -49,6 +66,7 @@ function LoginPage() {
 }
 
 export function CreateTMDBSession({ requestToken }: { requestToken: string }) {
+  // TODO: This login seems flaky
   const [createNewSession, newSession] = useNewSessionMutation();
   const dispatch = useAppDispatch();
 
@@ -59,7 +77,7 @@ export function CreateTMDBSession({ requestToken }: { requestToken: string }) {
         dispatch(authenticate(res.session_id));
       })
       .catch(console.error);
-  }, []);
+  }, [createNewSession, dispatch, requestToken]);
 
   if (newSession.isLoading || newSession.isUninitialized) {
     return <>Authenticating...</>;

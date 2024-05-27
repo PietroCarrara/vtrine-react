@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+const localStorageKey = "auth.tmdbSession";
 
 type AuthState =
   | {
@@ -14,7 +15,9 @@ export const auth = createSlice({
   name: "auth",
   reducers: {
     authenticate(state, tmdbSessionPayload: PayloadAction<string>) {
-      // TODO: Save state on localstorage
+      // FIXME: maybe not the best place to put a side-effect?
+      localStorage.setItem(localStorageKey, tmdbSessionPayload.payload);
+
       return {
         authenticated: true,
         tmdbSession: tmdbSessionPayload.payload,
@@ -26,8 +29,16 @@ export const auth = createSlice({
 export const { authenticate } = auth.actions;
 
 function initialState(): AuthState {
-  // TODO: Check on localStorage first
+  const session = localStorage.getItem(localStorageKey);
+
+  if (session === null) {
+    return {
+      authenticated: false,
+    };
+  }
+
   return {
-    authenticated: false,
+    authenticated: true,
+    tmdbSession: session,
   };
 }

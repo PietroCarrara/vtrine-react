@@ -187,6 +187,17 @@ const multiSearchResult = z.object({
   results: multiSearchResultItem.array(),
 });
 
+const accountDetails = z.object({
+  avatar: z.object({
+    tmdb: z.object({
+      avatar_path: z.string(),
+    }),
+  }),
+  id: z.number().int(),
+  name: z.string(),
+  username: z.string(),
+});
+
 export const tmdb = createApi({
   reducerPath: "tmdb-api",
   baseQuery: fetchBaseQuery({
@@ -317,6 +328,11 @@ export const tmdb = createApi({
           })
           .parse(res),
     }),
+
+    myDetails: builder.query({
+      query: (_: void) => "account",
+      transformResponse: (base) => accountDetails.parse(base),
+    }),
   }),
 });
 
@@ -343,4 +359,5 @@ export const {
   useVideosQuery,
   useNewAuthTokenMutation,
   useNewSessionMutation,
+  useMyDetailsQuery,
 } = tmdb;
