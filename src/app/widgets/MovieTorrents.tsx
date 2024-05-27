@@ -7,6 +7,7 @@ import {
 } from "../../redux/transmission";
 import { encodeData } from "../../utils/data-encoding";
 import { dataKey } from "../pages/Downloads";
+import { ErrorAlert } from "../components/ErrorAlert";
 
 const trackers = [
   "udp://open.demonii.com:1337/announce",
@@ -33,8 +34,7 @@ export function MovieTorrents({
     return (
       <>
         {header}
-        {/* TODO: Handle error */}
-        Something very bad happened!
+        <ErrorAlert text="An error occurred while searching for available downloads" />
       </>
     );
   }

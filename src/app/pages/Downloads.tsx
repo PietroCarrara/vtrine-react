@@ -3,7 +3,6 @@ import {
   TransmissionDownload,
   useDownloadsQuery,
 } from "../../redux/transmission";
-import { LoadingMediaCard } from "../widgets/MediaCard";
 import {
   MediaType,
   imageURL,
@@ -19,6 +18,7 @@ import { decodeData } from "../../utils/data-encoding";
 import { Link } from "react-router-dom";
 import { slugify } from "../../utils/utils";
 import { LoadingSpinner } from "../components/LoadingSpinner";
+import { ErrorAlert } from "../components/ErrorAlert";
 
 export const dataKey = "vuetrine-data:";
 
@@ -35,8 +35,11 @@ export function Downloads() {
   );
 
   if (donwloadsQuery.isError) {
-    // TODO: Handle error
-    return <Base>This is very bad!</Base>;
+    return (
+      <Base>
+        <ErrorAlert text="An error occurred while loading your downloads" />
+      </Base>
+    );
   }
 
   if (donwloadsQuery.isLoading || donwloadsQuery.isUninitialized) {
@@ -101,12 +104,26 @@ function MediaDownload({
   download: TransmissionDownload;
 }) {
   const queries = {
-    movie: useMovieDetailsQuery,
-    show: useShowDetailsQuery,
+    movie: useMovieDetailsQuery(mediaId, {
+      skip: mediaType !== "movie",
+    }),
+    show: useShowDetailsQuery(mediaId, {
+      skip: mediaType !== "show",
+    }),
   };
   const imageQueries = {
-    movie: useMovieImagesQuery,
-    show: useShowImagesQuery,
+    movie: useMovieImagesQuery(
+      { id: mediaId },
+      {
+        skip: mediaType !== "movie",
+      }
+    ),
+    show: useShowImagesQuery(
+      { id: mediaId },
+      {
+        skip: mediaType !== "show",
+      }
+    ),
   };
 
   const icons = {
@@ -120,10 +137,8 @@ function MediaDownload({
   };
   const Icon = icons[download.status];
 
-  // Okay, this is very dangerous: we are conditionally calling hooks.
-  // TODO: Call them always and choose the right result instead. Use `skip` to avoid excess requests.
-  const mediaQuery = queries[mediaType](mediaId);
-  const imageQuery = imageQueries[mediaType]({ id: mediaId });
+  const mediaQuery = queries[mediaType];
+  const imageQuery = imageQueries[mediaType];
 
   // First backdrop with a language or undefined
   const image = imageQuery.data?.backdrops

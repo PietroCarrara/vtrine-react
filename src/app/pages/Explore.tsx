@@ -5,6 +5,7 @@ import {
 import { range } from "../../utils/utils";
 import { LoadingMediaCard, DisplayMediaCard } from "../widgets/MediaCard";
 import { Sidescroller } from "../components/Sidescroller";
+import { ErrorAlert } from "../components/ErrorAlert";
 
 export function Explore() {
   const trendingMovies = useTrendingMoviesQuery({});
@@ -16,8 +17,9 @@ export function Explore() {
     trendingShows.isUninitialized ||
     trendingShows.isError
   ) {
-    // TODO: Handle errors
-    return <>Something went very bad!</>;
+    return (
+      <ErrorAlert text="An error occurred while loading the trending movies and shows" />
+    );
   }
 
   return (

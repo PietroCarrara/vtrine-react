@@ -4,6 +4,7 @@ import { useLazyMultiSearchQuery } from "../../redux/tmdb";
 import { range } from "../../utils/utils";
 import { DisplayMediaCard, LoadingMediaCard } from "../widgets/MediaCard";
 import debounce from "debounce";
+import { ErrorAlert } from "../components/ErrorAlert";
 
 const map = {
   tv: "show",
@@ -47,8 +48,7 @@ function Results() {
   }, [search, debouncedSearch, setIsTyping]);
 
   if (searchQuery.isError) {
-    // TODO: Deal with errors
-    return <>This is very bad</>;
+    return <ErrorAlert text="An error occurred while searching" />;
   }
 
   if (searchQuery.isUninitialized || search === "") {

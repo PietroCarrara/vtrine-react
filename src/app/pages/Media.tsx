@@ -14,17 +14,23 @@ import { LoadingText } from "../components/LoadingText";
 import { MovieTorrents } from "../widgets/MovieTorrents";
 import { VscPlayCircle } from "react-icons/vsc";
 import { TMDBButton } from "../components/TMDBButton";
+import { ErrorAlert } from "../components/ErrorAlert";
 
 export function Media({ id, mediaType }: { id: number; mediaType: MediaType }) {
   const queries = {
-    movie: useMovieDetailsQuery,
-    show: useShowDetailsQuery,
+    movie: useMovieDetailsQuery(id, {
+      skip: mediaType !== "movie",
+    }),
+    show: useShowDetailsQuery(id, {
+      skip: mediaType !== "show",
+    }),
   };
 
-  const mediaQuery = queries[mediaType](id);
+  const mediaQuery = queries[mediaType];
   if (mediaQuery.isError || mediaQuery.isUninitialized) {
-    // TODO: Handle errors
-    return <>This is very bad!</>;
+    return (
+      <ErrorAlert text="An error occurred while loading the information" />
+    );
   }
 
   return (
@@ -128,8 +134,7 @@ function Backdrops({ id, mediaType }: { id: number; mediaType: MediaType }) {
   const imagesQuery = queries[mediaType]({ id: id });
 
   if (imagesQuery.isError || imagesQuery.isUninitialized) {
-    // TODO: Handle errors
-    return <>This is very bad!</>;
+    return <ErrorAlert text="An error occurred while loading the images" />;
   }
 
   // Sort backdrops by language-neutral first, and then by score
@@ -178,8 +183,7 @@ function Links({ id, mediaType }: { id: number; mediaType: MediaType }) {
   });
 
   if (videosQuery.isError) {
-    // TODO: Handle errors
-    return <>This is very bad!</>;
+    return <ErrorAlert text="An error occurred while loading the trailers" />;
   }
 
   if (videosQuery.isLoading || videosQuery.isUninitialized) {
@@ -193,7 +197,9 @@ function Links({ id, mediaType }: { id: number; mediaType: MediaType }) {
   return (
     <div className="w-full grid-cols-1 grid gap-2 mt-3">
       <TMDBButton
-        link={`https://www.themoviedb.org/${mediaType}/${id}`}
+        link={`https://www.themoviedb.org/${
+          mediaType === "show" ? "tv" : "movie"
+        }/${id}`}
         text="TMDB"
       />
       {youtube && (
@@ -201,6 +207,7 @@ function Links({ id, mediaType }: { id: number; mediaType: MediaType }) {
           href={`https://www.youtube.com/watch?v=${youtube.key}`}
           target="_blank"
           className="py-2 w-full text-center font-semibold rounded-md bg-red-600"
+          rel="noreferrer"
         >
           <VscPlayCircle className="inline" /> YouTube
         </a>
@@ -210,6 +217,7 @@ function Links({ id, mediaType }: { id: number; mediaType: MediaType }) {
           href={`https://vimeo.com/${vimeo.key}`}
           target="_blank"
           className="py-2 w-full text-center font-semibold rounded-md bg-cyan-600"
+          rel="noreferrer"
         >
           <VscPlayCircle className="inline" /> Vimeo
         </a>

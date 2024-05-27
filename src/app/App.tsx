@@ -11,6 +11,7 @@ import { Downloads } from "./pages/Downloads";
 import { Search } from "./pages/Search";
 import { Account, CreateTMDBSession } from "./pages/Account";
 import { Redirect } from "../utils/utils";
+import { ErrorAlert } from "./components/ErrorAlert";
 
 const router = createBrowserRouter([
   {
@@ -56,8 +57,7 @@ function App() {
 function MovieLoader() {
   const { movieId } = useParams();
   if (!movieId) {
-    // TODO: Handle error
-    return <>This is very bad!</>;
+    return <ErrorAlert text="This movie was not found" />;
   }
   const parts = movieId.split("-");
   const idStr = parts[parts.length - 1];
@@ -69,8 +69,7 @@ function MovieLoader() {
 function ShowLoader() {
   const { showId } = useParams();
   if (!showId) {
-    // TODO: Handle error
-    return <>This is very bad saijsaijiais!</>;
+    return <ErrorAlert text="This show was not found" />;
   }
   const parts = showId.split("-");
   const idStr = parts[parts.length - 1];
