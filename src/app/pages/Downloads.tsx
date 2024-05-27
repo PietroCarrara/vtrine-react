@@ -18,6 +18,7 @@ import { LoadingText } from "../components/LoadingText";
 import { decodeData } from "../../utils/data-encoding";
 import { Link } from "react-router-dom";
 import { slugify } from "../../utils/utils";
+import { LoadingSpinner } from "../components/LoadingSpinner";
 
 export const dataKey = "vuetrine-data:";
 
@@ -39,14 +40,9 @@ export function Downloads() {
   }
 
   if (donwloadsQuery.isLoading || donwloadsQuery.isUninitialized) {
-    // TODO: Replace thiese with actual Loading Download Cards, or even just a spinner
     return (
       <Base>
-        <LoadingMediaCard />
-        <LoadingMediaCard />
-        <LoadingMediaCard />
-        <LoadingMediaCard />
-        <LoadingMediaCard />
+        <LoadingSpinner />
       </Base>
     );
   }
