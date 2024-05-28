@@ -8,6 +8,7 @@ import {
 import { encodeData } from "../../utils/data-encoding";
 import { dataKey } from "../pages/Downloads";
 import { ErrorAlert } from "../components/ErrorAlert";
+import { WarnAlert } from "../components/InfoAlert";
 
 const trackers = [
   "udp://open.demonii.com:1337/announce",
@@ -57,6 +58,9 @@ export function MovieTorrents({
     <div>
       {header}
       <div className="md:grid md:grid-cols-3 md:gap-x-3">
+        {downloadsQuery.data.streams.length === 0 && (
+          <WarnAlert text="Could not find any downloads" />
+        )}
         {downloadsQuery.data.streams.map((s) => (
           <DownloadItem {...s} key={s.title} tmdbId={tmdbId} />
         ))}
