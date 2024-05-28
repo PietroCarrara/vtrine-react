@@ -38,7 +38,7 @@ export function Redirect({ url }: { url: string }) {
 
   useEffect(() => {
     navigate(url);
-  }, []);
+  }, [navigate, url]);
 
   return <></>;
 }
