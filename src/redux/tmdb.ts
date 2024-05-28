@@ -83,7 +83,7 @@ const basicShowDetails = z
 const movieDetails = basicMovieDetails.and(
   z.object({
     tagline: z.string(),
-    imdb_id: z.string().optional(),
+    imdb_id: z.string().optional().nullable(),
     status: z.string(),
     genres: z.object({ id: z.number().int(), name: z.string() }).array(),
   })
@@ -92,7 +92,7 @@ const movieDetails = basicMovieDetails.and(
 const showDetails = basicShowDetails.and(
   z.object({
     tagline: z.string(),
-    imdb_id: z.string().optional(),
+    imdb_id: z.string().optional().nullable(),
     genres: z.object({ id: z.number().int(), name: z.string() }).array(),
     number_of_episodes: z.number().int(),
     number_of_seasons: z.number().int(),
@@ -185,6 +185,20 @@ const multiSearchResult = z.object({
   total_pages: z.number().int(),
   total_results: z.number().int(),
   results: multiSearchResultItem.array(),
+});
+
+const movieWatchlistPageResult = z.object({
+  total_pages: z.number().int(),
+  total_results: z.number().int(),
+  page: z.number().int(),
+  results: basicMovieDetails.array(),
+});
+
+const showWatchlistPageResult = z.object({
+  total_pages: z.number().int(),
+  total_results: z.number().int(),
+  page: z.number().int(),
+  results: basicShowDetails.array(),
 });
 
 const accountDetails = z.object({
@@ -333,6 +347,40 @@ export const tmdb = createApi({
       query: (_: void) => "account",
       transformResponse: (base) => accountDetails.parse(base),
     }),
+
+    myMovieWatchlist: builder.query({
+      query: ({
+        page,
+        sortBy,
+      }: {
+        page: number;
+        sortBy: "created_at.asc" | "created_at.desc";
+      }) => ({
+        url: "account/account_id/watchlist/movies",
+        params: {
+          page,
+          sort_by: sortBy,
+        },
+      }),
+      transformResponse: (base) => movieWatchlistPageResult.parse(base),
+    }),
+
+    myShowWatchlist: builder.query({
+      query: ({
+        page,
+        sortBy,
+      }: {
+        page: number;
+        sortBy: "created_at.asc" | "created_at.desc";
+      }) => ({
+        url: "account/account_id/watchlist/tv",
+        params: {
+          page,
+          sort_by: sortBy,
+        },
+      }),
+      transformResponse: (base) => showWatchlistPageResult.parse(base),
+    }),
   }),
 });
 
@@ -360,4 +408,6 @@ export const {
   useNewAuthTokenMutation,
   useNewSessionMutation,
   useMyDetailsQuery,
+  useMyMovieWatchlistQuery,
+  useMyShowWatchlistQuery,
 } = tmdb;

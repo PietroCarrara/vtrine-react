@@ -1,16 +1,15 @@
 import { useEffect } from "react";
 import {
-  useMyDetailsQuery,
   useNewAuthTokenMutation,
   useNewSessionMutation,
-} from "../../redux/tmdb";
-import { TMDBButton } from "../components/TMDBButton";
-import { LoadingElement } from "../components/LoadingElement";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { authenticate } from "../../redux/auth.slice";
-import { Redirect } from "../../utils/utils";
-import { LoadingSpinner } from "../components/LoadingSpinner";
-import { ErrorAlert } from "../components/ErrorAlert";
+} from "../../../redux/tmdb";
+import { TMDBButton } from "../../components/TMDBButton";
+import { LoadingElement } from "../../components/LoadingElement";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { authenticate } from "../../../redux/auth.slice";
+import { Redirect } from "../../../utils/utils";
+import { ProfilePage } from "./ProfilePage";
+import { LoadingSpinner } from "../../components/LoadingSpinner";
 
 export function Account() {
   const auth = useAppSelector((s) => s.auth);
@@ -19,24 +18,6 @@ export function Account() {
     <div className="m-3">
       {(auth.authenticated && <ProfilePage />) || <LoginPage />}
     </div>
-  );
-}
-
-function ProfilePage() {
-  const user = useMyDetailsQuery();
-
-  if (user.isLoading || user.isUninitialized) {
-    return <LoadingSpinner />;
-  }
-
-  if (user.isError) {
-    return <ErrorAlert text="An error ocurred when fetching your user data!" />;
-  }
-
-  return (
-    <>
-      <h1 className="text-3xl my-3 mx-3 font-black">{user.data.name}</h1>
-    </>
   );
 }
 
@@ -80,7 +61,7 @@ export function CreateTMDBSession({ requestToken }: { requestToken: string }) {
   }, [createNewSession, dispatch, requestToken]);
 
   if (newSession.isLoading || newSession.isUninitialized) {
-    return <>Authenticating...</>;
+    return <LoadingSpinner />;
   }
 
   return <Redirect url="/account" />;
