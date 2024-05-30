@@ -2,6 +2,7 @@ import React from "react";
 import {
   TransmissionDownload,
   useDownloadsQuery,
+  useRemoveDownloadsMutation,
 } from "../../redux/transmission";
 import {
   MediaType,
@@ -11,7 +12,7 @@ import {
   useShowDetailsQuery,
   useShowImagesQuery,
 } from "../../redux/tmdb";
-import { VscCheck, VscCloudDownload, VscDebugStop } from "react-icons/vsc";
+import { VscTrash } from "react-icons/vsc";
 import { LoadingImage } from "../components/LoadingImage";
 import { LoadingText } from "../components/LoadingText";
 import { decodeData } from "../../utils/data-encoding";
@@ -103,6 +104,8 @@ function MediaDownload({
   mediaType: MediaType;
   download: TransmissionDownload;
 }) {
+  const [deleteDownload, deletionStatus] = useRemoveDownloadsMutation();
+
   const queries = {
     movie: useMovieDetailsQuery(mediaId, {
       skip: mediaType !== "movie",
@@ -126,16 +129,15 @@ function MediaDownload({
     ),
   };
 
-  const icons = {
-    stopped: VscDebugStop,
-    "on-queue-to-verify-local-data": VscDebugStop,
-    "verifying-local-data": VscDebugStop,
-    "on-queue-to-download": VscCloudDownload,
-    downloading: VscCloudDownload,
-    "on-queue-to-seed": VscCheck,
-    seeding: VscCheck,
+  const colors = {
+    stopped: "bg-red-500",
+    "on-queue-to-verify-local-data": "bg-red-500",
+    "verifying-local-data": "bg-red-500",
+    "on-queue-to-download": "bg-blue-500",
+    downloading: "bg-blue-500",
+    "on-queue-to-seed": "bg-green-500",
+    seeding: "bg-green-500",
   };
-  const Icon = icons[download.status];
 
   const mediaQuery = queries[mediaType];
   const imageQuery = imageQueries[mediaType];
@@ -176,15 +178,22 @@ function MediaDownload({
         />
         <div className="w-full bg-white h-1 my-1">
           <div
-            className="h-full bg-green-500"
+            className={`h-full ${colors[download.status]}`}
             style={{
               width: `${Math.max(4, download.percentDone * 100)}%`,
             }}
           ></div>
         </div>
       </div>
-      <div className="m-auto">
-        <Icon />
+      <div className="m-auto col-span-2 w-full flex justify-evenly">
+        <button
+          className="rounded bg-red-500 p-2 text-center"
+          onClick={() =>
+            deleteDownload({ ids: [download.id], deleteData: true })
+          }
+        >
+          {deletionStatus.isLoading ? <LoadingSpinner /> : <VscTrash />}
+        </button>
       </div>
     </div>
   );

@@ -178,6 +178,20 @@ export const transmission = createApi({
       }),
       invalidatesTags: ["downloads"],
     }),
+
+    removeDownloads: builder.mutation({
+      query: ({ ids, deleteData }: { ids: number[]; deleteData: boolean }) => ({
+        url: "/",
+        body: {
+          method: "torrent-remove",
+          arguments: {
+            ids,
+            "delete-loca-data": deleteData,
+          },
+        },
+      }),
+      invalidatesTags: ["downloads"],
+    }),
   }),
 });
 
@@ -185,4 +199,5 @@ export const {
   useDownloadsQuery,
   useAddDownloadMutation,
   useDownloadSetMutation,
+  useRemoveDownloadsMutation,
 } = transmission;
