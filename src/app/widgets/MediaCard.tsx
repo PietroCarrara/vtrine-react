@@ -1,47 +1,9 @@
-import {
-  MediaType,
-  imageURL,
-  useMovieDetailsQuery,
-  useShowDetailsQuery,
-} from "../../redux/tmdb";
+import { MediaType, imageURL } from "../../redux/tmdb";
 import { slugify } from "../../utils/utils";
 import { Link } from "react-router-dom";
 import { LoadingText } from "../components/LoadingText";
 import { LoadingImage } from "../components/LoadingImage";
 import { LoadingRating } from "./LoadingRating";
-import { ErrorAlert } from "../components/ErrorAlert";
-
-export function MediaCard({ id, type }: { id: number; type: MediaType }) {
-  const movieQuery = useMovieDetailsQuery(id, {
-    skip: type !== "movie",
-  });
-  const showQuery = useShowDetailsQuery(id, {
-    skip: type !== "show",
-  });
-
-  const query = {
-    movie: movieQuery,
-    show: showQuery,
-  }[type];
-
-  if (query.isError) {
-    return <ErrorAlert text="Could not fetch information" />;
-  }
-
-  if (query.isLoading || query.isUninitialized) {
-    return <LoadingMediaCard />;
-  }
-
-  return (
-    <DisplayMediaCard
-      media={{
-        ...query.data,
-        state: "loaded",
-        type,
-      }}
-    />
-  );
-}
 
 export function LoadingMediaCard() {
   return <DisplayMediaCard media={{ state: "loading" }} />;

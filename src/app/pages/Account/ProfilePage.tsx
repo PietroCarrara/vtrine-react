@@ -9,7 +9,7 @@ import { ErrorAlert } from "../../components/ErrorAlert";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { Sidescroller } from "../../components/Sidescroller";
 import { range } from "../../../utils/utils";
-import { LoadingMediaCard, MediaCard } from "../../widgets/MediaCard";
+import { DisplayMediaCard, LoadingMediaCard } from "../../widgets/MediaCard";
 
 export function ProfilePage() {
   const user = useMyDetailsQuery();
@@ -149,7 +149,13 @@ function MediaWatchlistPage({
     <>
       {watchlist.data.results.map((media) => (
         <Container key={media.id}>
-          <MediaCard type={mediaType} id={media.id} />
+          <DisplayMediaCard
+            media={{
+              ...media,
+              type: mediaType,
+              state: "loaded",
+            }}
+          />
         </Container>
       ))}
     </>
