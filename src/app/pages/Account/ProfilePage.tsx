@@ -13,16 +13,31 @@ import { LoadingMediaCard, MediaCard } from "../../widgets/MediaCard";
 
 export function ProfilePage() {
   const user = useMyDetailsQuery();
-  const [state] = useState({
+  const [state, setState] = useState({
     movieWatchlistPages: 1,
     showWatchlistPages: 1,
   });
+  const movieWatchlist = useMyMovieWatchlistQuery({
+    page: 1,
+    sortBy: "created_at.desc",
+  });
+  const showWatchlist = useMyShowWatchlistQuery({
+    page: 1,
+    sortBy: "created_at.desc",
+  });
 
-  if (user.isLoading || user.isUninitialized) {
+  if (
+    user.isLoading ||
+    user.isUninitialized ||
+    movieWatchlist.isLoading ||
+    movieWatchlist.isUninitialized ||
+    showWatchlist.isLoading ||
+    showWatchlist.isUninitialized
+  ) {
     return <LoadingSpinner />;
   }
 
-  if (user.isError) {
+  if (user.isError || movieWatchlist.isError || showWatchlist.isError) {
     return <ErrorAlert text="An error ocurred when fetching your user data!" />;
   }
 
@@ -31,19 +46,53 @@ export function ProfilePage() {
       <h1 className="text-3xl my-3 font-black">{user.data.name}</h1>
 
       <h2 className="text-2xl my-3">Movies Watchlist</h2>
-      <Sidescroller>
+      <Sidescroller
+        onScrollEnd={(scroll) => {
+          if (
+            scroll > 0.95 &&
+            state.movieWatchlistPages < movieWatchlist.data.total_pages
+          ) {
+            setState({
+              ...state,
+              movieWatchlistPages: state.movieWatchlistPages + 1,
+            });
+          }
+        }}
+      >
         <div className="flex space-x-4">
           {range(state.movieWatchlistPages).map((i) => (
             <MediaWatchlistPage key={i} page={i + 1} mediaType="movie" />
           ))}
+          {state.movieWatchlistPages < movieWatchlist.data.total_pages && (
+            <Container>
+              <LoadingMediaCard />
+            </Container>
+          )}
         </div>
       </Sidescroller>
       <h2 className="text-2xl my-3">Shows Watchlist</h2>
-      <Sidescroller>
+      <Sidescroller
+        onScrollEnd={(scroll) => {
+          if (
+            scroll > 0.95 &&
+            state.showWatchlistPages < showWatchlist.data.total_pages
+          ) {
+            setState({
+              ...state,
+              showWatchlistPages: state.showWatchlistPages + 1,
+            });
+          }
+        }}
+      >
         <div className="flex space-x-4">
           {range(state.showWatchlistPages).map((i) => (
             <MediaWatchlistPage key={i} page={i + 1} mediaType="show" />
           ))}
+          {state.showWatchlistPages < showWatchlist.data.total_pages && (
+            <Container>
+              <LoadingMediaCard />
+            </Container>
+          )}
         </div>
       </Sidescroller>
     </>
@@ -88,8 +137,8 @@ function MediaWatchlistPage({
     return (
       <>
         {range(5).map((i) => (
-          <Container>
-            <LoadingMediaCard key={i} />
+          <Container key={i}>
+            <LoadingMediaCard />
           </Container>
         ))}
       </>
@@ -99,7 +148,7 @@ function MediaWatchlistPage({
   return (
     <>
       {watchlist.data.results.map((media) => (
-        <Container>
+        <Container key={media.id}>
           <MediaCard type={mediaType} id={media.id} />
         </Container>
       ))}
