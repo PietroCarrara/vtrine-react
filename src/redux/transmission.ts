@@ -186,7 +186,7 @@ export const transmission = createApi({
           method: "torrent-remove",
           arguments: {
             ids,
-            "delete-loca-data": deleteData,
+            "delete-local-data": deleteData,
           },
         },
       }),
