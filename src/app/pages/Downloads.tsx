@@ -146,6 +146,14 @@ function MediaDownload({
   const image = imageQuery.data?.backdrops
     .slice()
     .sort((a, b) => {
+      // Prefer english backdrops
+      if (a.iso_639_1 === "en" || b.iso_639_1 === "en") {
+        const aValue = a.iso_639_1 === "en" ? a.vote_average : -1;
+        const bValue = b.iso_639_1 === "en" ? b.vote_average : -1;
+
+        return bValue - aValue;
+      }
+
       if (
         a.iso_639_1 === b.iso_639_1 ||
         (a.iso_639_1 !== "xx" && b.iso_639_1 !== "xx")
