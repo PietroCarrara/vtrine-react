@@ -15,6 +15,7 @@ import { MovieTorrents } from "../widgets/MovieTorrents";
 import { VscPlayCircle } from "react-icons/vsc";
 import { TMDBButton } from "../components/TMDBButton";
 import { ErrorAlert } from "../components/ErrorAlert";
+import { ShowTorrents } from "../widgets/ShowTorrents";
 
 export function Media({ id, mediaType }: { id: number; mediaType: MediaType }) {
   const queries = {
@@ -117,8 +118,14 @@ export function Media({ id, mediaType }: { id: number; mediaType: MediaType }) {
 
         <Backdrops id={id} mediaType={mediaType} />
 
-        {mediaQuery.isSuccess && mediaQuery.data.imdb_id && (
-          <MovieTorrents tmdbId={id} imdbId={mediaQuery.data.imdb_id} />
+        {mediaQuery.isSuccess &&
+          mediaType === "movie" &&
+          mediaQuery.data.imdb_id && (
+            <MovieTorrents tmdbId={id} imdbId={mediaQuery.data.imdb_id} />
+          )}
+
+        {mediaQuery.isSuccess && mediaType === "show" && (
+          <ShowTorrents tmdbId={id} />
         )}
       </div>
     </div>

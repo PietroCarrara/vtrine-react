@@ -8,7 +8,8 @@ import {
 import { encodeData } from "../../utils/data-encoding";
 import { dataKey } from "../pages/Downloads";
 import { ErrorAlert } from "../components/ErrorAlert";
-import { WarnAlert } from "../components/InfoAlert";
+import { WarnAlert } from "../components/WarnAlert";
+import { DownloadMagnet } from "./DownloadMagnet";
 
 const trackers = [
   "udp://open.demonii.com:1337/announce",
@@ -29,7 +30,13 @@ export function MovieTorrents({
   imdbId: string;
 }) {
   const downloadsQuery = useMovieQuery(imdbId);
-  const header = <h2 className="text-xl font-black my-3">Downloads</h2>;
+  const header = (
+    <>
+      <h2 className="text-xl font-black my-3">Downloads</h2>
+      <DownloadMagnet id={tmdbId} mediaType="movie" />
+      <div className="my-3" />
+    </>
+  );
 
   if (downloadsQuery.isError) {
     return (
